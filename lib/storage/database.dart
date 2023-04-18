@@ -8,6 +8,14 @@ import '../models/alarm.dart';
 late final ValueListenable<Box<AlarmModel>> alarmsBoxListener;
 
 class DatabaseHelper {
+  static final DatabaseHelper _databaseHelper = DatabaseHelper._internal();
+
+  factory DatabaseHelper() {
+    return _databaseHelper;
+  }
+
+  DatabaseHelper._internal();
+
   static const String alarmsBox = 'alarms';
   static const String settingsBox = 'settings';
 

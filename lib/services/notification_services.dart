@@ -2,9 +2,17 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 
 import '../repositories/alarms_repository.dart';
-import 'alarm_services.dart';
 
 class NotificationServices {
+  static final NotificationServices _notificationServices =
+      NotificationServices._internal();
+
+  factory NotificationServices() {
+    return _notificationServices;
+  }
+
+  NotificationServices._internal();
+
   @pragma('vm:entry-point')
   static Future<void> initializeNotifications() async {
     await AwesomeNotifications().initialize(
@@ -18,8 +26,9 @@ class NotificationServices {
           defaultColor: Colors.white,
           ledColor: Colors.white,
           importance: NotificationImportance.Max,
-          enableVibration: true,
-          playSound: false,
+          enableVibration: false,
+          playSound: true,
+          soundSource: 'resource://raw/alarm',
         ),
         NotificationChannel(
           channelGroupKey: 'pre_alarm_notifications_channel_group',
@@ -115,7 +124,7 @@ class NotificationServices {
     final String alarmId = payload['alarmId'] ?? '';
     final String alarmNotificationId = payload['alarmNotificationId'] ?? '';
     if (payload['action'] == 'Stop alarm') {
-      await stopAlarm();
+      debugPrint('STOP!');
     }
     if (payload['action'] == 'Switch off') {
       await AwesomeNotifications()
@@ -125,6 +134,7 @@ class NotificationServices {
       if (!isRepeatingAlarm) {
         await AlarmsRepository().launchAlarm(alarmId);
       }
+      debugPrint('SWITCH OFF!');
     }
   }
 
@@ -140,7 +150,6 @@ class NotificationServices {
     final String preAlarmNotificationId =
         payload['preAlarmNotificationId'] ?? '';
     if (action.channelKey == 'alarm_notifications_channel') {
-      await playAlarm();
       await AwesomeNotifications().dismiss(int.parse(preAlarmNotificationId));
       final bool isRepeatingAlarm =
           AlarmsRepository().checkIsRepeatingAlarm(alarmId) ?? false;
@@ -148,9 +157,12 @@ class NotificationServices {
         await AlarmsRepository().launchAlarm(alarmId);
       }
     }
+    debugPrint('NOTIFICATION DISPLAYED!');
   }
 
   @pragma('vm:entry-point')
   static Future<void> onDismissActionReceivedMethod(
-      ReceivedNotification action) async {}
+      ReceivedNotification action) async {
+    debugPrint('NOTIFICATION DISSMISSED!');
+  }
 }

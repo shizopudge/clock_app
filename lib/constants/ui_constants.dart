@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../UI/pages/add_alarm/widgets/weekdays.dart';
 import '../UI/pages/alarm/view/alarm_view.dart';
 import '../UI/pages/stopwatch/view/stopwatch_view.dart';
-import '../UI/pages/timer/view/timer_view.dart';
 import '../theme/fonts.dart';
 import '../theme/pallete.dart';
 
@@ -11,7 +10,6 @@ class UIConstants {
   static const pages = [
     AlarmView(),
     StopwatchView(),
-    TimerView(),
   ];
 
   static const List<String> daysList = [
@@ -45,21 +43,12 @@ class UIConstants {
       ),
     ),
     BottomNavigationBarItem(
-      label: 'Stopwatch',
+      label: 'Habits',
       icon: Icon(
         Icons.timer_10_rounded,
       ),
       activeIcon: Icon(
         Icons.timer_10_rounded,
-      ),
-    ),
-    BottomNavigationBarItem(
-      label: 'Timer',
-      icon: Icon(
-        Icons.timer,
-      ),
-      activeIcon: Icon(
-        Icons.timer,
       ),
     ),
   ];

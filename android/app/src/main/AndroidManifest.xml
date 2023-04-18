@@ -30,7 +30,7 @@
         </activity>
         <meta-data
             android:name="flutterEmbedding"
-            android:value="2" />
+            android:value="2" />           
         <!-- Alarm -->
         <service
             android:name="dev.fluttercommunity.plus.androidalarmmanager.AlarmService"

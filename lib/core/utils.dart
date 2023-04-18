@@ -1,11 +1,7 @@
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 
 import 'package:intl/intl.dart';
-
-import '../models/alarm.dart';
-import '../models/next_alarm_ring_date.dart';
 
 class AppUtils {
   static final DateFormat _dateFormat = DateFormat('EEE, d MMM');
@@ -82,19 +78,6 @@ class AppUtils {
 
   static Future<String> getCurrentTimeZone() async =>
       await FlutterTimezone.getLocalTimezone();
-
-  static Future<DateTime?> getNextAlarmRingDateTime(AlarmModel alarm) async {
-    final List<NotificationModel> a =
-        await AwesomeNotifications().listScheduledNotifications();
-    for (NotificationModel e in a) {
-      if (e.content?.channelKey == 'alarm_notifications_channel') {
-        if (alarm.id == e.content?.payload?['alarmId']) {
-          final a = NextAlarmRingDate.fromMap(e.schedule!.toMap());
-          return a.convertToDateTime();
-        }
-      }
-    }
-  }
 
   static String convertIntDayToString(int dayNum) {
     switch (dayNum) {

@@ -3,47 +3,35 @@ import 'dart:math';
 import 'package:awesome_notifications/awesome_notifications.dart';
 
 import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
 
 import '../core/utils.dart';
 import '../models/alarm.dart';
 import 'notification_services.dart';
 
-final AudioPlayer player = AudioPlayer();
-
-@pragma('vm:entry-point')
-Future<void> playAlarm() async {
-  await player.setAsset('assets/sounds/alarm.wav');
-  await player.setLoopMode(LoopMode.one);
-  await player.play();
-  debugPrint(
-      'STARTED, Is playng: ${player.playing}, Hashcode ${player.hashCode}');
-}
-
-@pragma('vm:entry-point')
-Future<void> stopAlarm() async {
-  await player.setLoopMode(LoopMode.off);
-  await player.stop();
-  debugPrint(
-      'STOPED, Is playng: ${player.playing}, Hashcode ${player.hashCode}');
-}
-
 class AlarmServices {
+  static final AlarmServices _alarmServices = AlarmServices._internal();
+
+  factory AlarmServices() {
+    return _alarmServices;
+  }
+
+  AlarmServices._internal();
+
   @pragma('vm:entry-point')
-  static Future<void> scheduleAlarms(List<AlarmModel> launchedAlarms) async {
+  Future<void> scheduleAlarms(List<AlarmModel> alarms) async {
     DateTime alarmTime;
     DateTime preAlarmNotificationTime;
     await AwesomeNotifications().cancelAllSchedules();
-    for (AlarmModel alarm in launchedAlarms) {
+    for (AlarmModel alarm in alarms) {
       if (alarm.weekdays.isEmpty) {
         alarmTime =
             AppUtils.getNotificationTime(alarm.time.hour, alarm.time.minute);
         preAlarmNotificationTime = AppUtils.getNotificationTime(
-            alarm.time.hour, alarm.time.minute - 1);
+            alarm.time.hour, alarm.time.minute - 15);
         if (alarmTime.isAfter(DateTime.now())) {
           debugPrint(alarmTime.toIso8601String());
-          final int alarmNotificationId = Random().nextInt(259883616);
-          final int preAlarmNotificationId = Random().nextInt(259883616);
+          final int alarmNotificationId = Random().nextInt(959883616);
+          final int preAlarmNotificationId = Random().nextInt(959883616);
           _scheduleOneAlarmNotification(
             alarmNotificationId: alarmNotificationId,
             preAlarmNotificationId: preAlarmNotificationId,
@@ -66,12 +54,12 @@ class AlarmServices {
           );
           preAlarmNotificationTime = AppUtils.getNotificationTime(
             alarm.time.hour,
-            alarm.time.minute - 1,
+            alarm.time.minute - 15,
             isTomorrow: true,
           );
           debugPrint(alarmTime.toIso8601String());
-          final int alarmNotificationId = Random().nextInt(259883616);
-          final int preAlarmNotificationId = Random().nextInt(259883616);
+          final int alarmNotificationId = Random().nextInt(959883616);
+          final int preAlarmNotificationId = Random().nextInt(959883616);
           _scheduleOneAlarmNotification(
             alarmNotificationId: alarmNotificationId,
             preAlarmNotificationId: preAlarmNotificationId,
@@ -89,13 +77,13 @@ class AlarmServices {
         alarmTime =
             AppUtils.getNotificationTime(alarm.time.hour, alarm.time.minute);
         preAlarmNotificationTime = AppUtils.getNotificationTime(
-            alarm.time.hour, alarm.time.minute - 1);
+            alarm.time.hour, alarm.time.minute - 15);
         if (alarmTime.isAfter(DateTime.now()) &&
             alarm.weekdays
                 .contains(AppUtils.convertIntDayToString(alarmTime.weekday))) {
           debugPrint(alarmTime.toIso8601String());
-          final int alarmNotificationId = Random().nextInt(259883616);
-          final int preAlarmNotificationId = Random().nextInt(259883616);
+          final int alarmNotificationId = Random().nextInt(959883616);
+          final int preAlarmNotificationId = Random().nextInt(959883616);
           _scheduleOneAlarmNotification(
             alarmNotificationId: alarmNotificationId,
             preAlarmNotificationId: preAlarmNotificationId,
@@ -118,14 +106,14 @@ class AlarmServices {
           );
           preAlarmNotificationTime = AppUtils.getNotificationTime(
             alarm.time.hour,
-            alarm.time.minute - 1,
+            alarm.time.minute - 15,
             isTomorrow: true,
           );
           if (alarm.weekdays
               .contains(AppUtils.convertIntDayToString(alarmTime.weekday))) {
             debugPrint(alarmTime.toIso8601String());
-            final int alarmNotificationId = Random().nextInt(259883616);
-            final int preAlarmNotificationId = Random().nextInt(259883616);
+            final int alarmNotificationId = Random().nextInt(959883616);
+            final int preAlarmNotificationId = Random().nextInt(959883616);
             _scheduleOneAlarmNotification(
               alarmNotificationId: alarmNotificationId,
               preAlarmNotificationId: preAlarmNotificationId,
@@ -142,12 +130,13 @@ class AlarmServices {
         }
       }
     }
+
     final a = await AwesomeNotifications().listScheduledNotifications();
     debugPrint(a.length.toString());
   }
 
   @pragma('vm:entry-point')
-  static Future<void> _scheduleOneAlarmNotification({
+  Future<void> _scheduleOneAlarmNotification({
     required int alarmNotificationId,
     required int preAlarmNotificationId,
     required DateTime alarmTime,
@@ -180,7 +169,7 @@ class AlarmServices {
   }
 
   @pragma('vm:entry-point')
-  static Future<void> _scheduleOnePreAlarmNotification({
+  Future<void> _scheduleOnePreAlarmNotification({
     required int alarmNotificationId,
     required int preAlarmNotificationId,
     required DateTime preAlarmNotificationTime,

@@ -5,7 +5,6 @@ import '../UI/common/clock.dart';
 import '../UI/pages/alarm/view/alarm_view.dart';
 import '../UI/pages/alarm/widgets/alarm_appbar.dart';
 import '../bloc/add_edit_alarm/add_edit_alarm_cubit.dart';
-import '../bloc/alarms/alarms_bloc.dart';
 import '../bloc/alarms_timer/alarm_timer_cubit.dart';
 import '../bloc/edit_alarms/edit_alarms_cubit.dart';
 import '../bloc/settings/settings_cubit.dart';
@@ -40,14 +39,6 @@ class AppProviders {
     ),
     BlocProvider(
       create: (_) => EditAlarmsCubit(),
-    ),
-  ];
-
-  static final blocs = <dynamic>[
-    BlocProvider(
-      create: (_) => AlarmsBloc(
-        alarmsRepository: AlarmsRepository(),
-      )..add(AlarmsGetAlarmsEvent()),
     ),
   ];
 }

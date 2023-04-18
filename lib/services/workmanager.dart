@@ -18,9 +18,14 @@ void callbackDispatcher() {
           await NotificationServices.initializeNotifications();
           final List<AlarmModel> launchedAlarms =
               await AlarmsRepository().getLaunchedAlarms();
-          await AlarmServices.scheduleAlarms(launchedAlarms).whenComplete(
-            () => debugPrint('Alarms scheduling is success! ${DateTime.now()}'),
-          );
+          await AlarmServices()
+              .scheduleAlarms(
+                launchedAlarms,
+              )
+              .whenComplete(
+                () => debugPrint(
+                    'Alarms scheduling is success! ${DateTime.now()}'),
+              );
           debugPrint('Schedule is stoping! ${DateTime.now()}');
           return Future.value(true);
         } on Exception catch (e) {
@@ -31,19 +36,6 @@ void callbackDispatcher() {
     return Future.value(true);
   });
 }
-
-// @pragma('vm:entry-point')
-// Future<void> workmanagerInitialize() async {
-//   await Workmanager().initialize(
-//     callbackDispatcher,
-//     isInDebugMode: true,
-//   );
-//   await Workmanager().registerPeriodicTask(
-//     'Alarms schedule',
-//     'Schedule',
-//     frequency: const Duration(minutes: 15),
-//   );
-// }
 
 class WorkManagerHeleper {
   @pragma('vm:entry-point')

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../bloc/alarms/alarms_bloc.dart';
 import '../bloc/edit_alarms/edit_alarms_cubit.dart';
 import '../constants/ui_constants.dart';
 import '../core/utils.dart';
 import '../models/alarm.dart';
+import '../repositories/alarms_repository.dart';
 import '../theme/pallete.dart';
 import 'common/exit_dialog.dart';
 import 'pages/alarm/view/alarm_view.dart';
@@ -18,7 +18,9 @@ class PageCubit extends Cubit<int> {
 }
 
 class Base extends StatelessWidget {
-  const Base({super.key});
+  final AlarmsRepository _alarmsRepository;
+  const Base({super.key, required AlarmsRepository alarmsRepository})
+      : _alarmsRepository = alarmsRepository;
 
   static void _goBackToDefaultMode(BuildContext context) {
     context.read<EditAlarmsCubit>().toggleEditMode();
@@ -28,7 +30,7 @@ class Base extends StatelessWidget {
   static void _onPageChange(int page, BuildContext context) =>
       context.read<PageCubit>().changePage(page);
 
-  static void _onTapInEditMode(
+  void _onTapInEditMode(
       BuildContext context, int index, EditAlarmsState editAlarmsState) {
     if (index == 0) {
       _goBackToDefaultMode(context);
@@ -43,45 +45,33 @@ class Base extends StatelessWidget {
     }
   }
 
-  static void _onDelete(List<AlarmModel> alarms, BuildContext context) {
+  void _onDelete(List<AlarmModel> alarms, BuildContext context) {
     if (alarms.length > 1) {
-      context.read<AlarmsBloc>().add(
-            AlarmsDeleteAlarmsEvent(
-              alarms: alarms,
-            ),
-          );
+      List<String> ids = [];
+      for (AlarmModel alarm in alarms) {
+        ids.add(alarm.id);
+      }
+      _alarmsRepository.deleteAlarms(ids);
       context.read<EditAlarmsCubit>().clearAlarms();
       _goBackToDefaultMode(context);
     } else if (alarms.isEmpty) {
       AppUtils.showSnackBar(context, 'No alarms selected');
     } else {
-      context.read<AlarmsBloc>().add(
-            AlarmsDeleteAlarmEvent(
-              id: alarms.first.id,
-            ),
-          );
+      _alarmsRepository.deleteAlarm(alarms.first.id);
       context.read<EditAlarmsCubit>().clearAlarms();
       _goBackToDefaultMode(context);
     }
   }
 
-  static void _onSwitchAlarm(List<AlarmModel> alarms, BuildContext context) {
+  void _onSwitchAlarm(List<AlarmModel> alarms, BuildContext context) {
     if (alarms.length > 1) {
-      context.read<AlarmsBloc>().add(
-            AlarmsLaunchAlarmsEvent(
-              alarms: alarms,
-            ),
-          );
+      _alarmsRepository.launchAlarms(alarms);
       context.read<EditAlarmsCubit>().clearAlarms();
       _goBackToDefaultMode(context);
     } else if (alarms.isEmpty) {
       AppUtils.showSnackBar(context, 'No alarms selected');
     } else {
-      context.read<AlarmsBloc>().add(
-            AlarmsLaunchAlarmEvent(
-              id: alarms.first.id,
-            ),
-          );
+      _alarmsRepository.launchAlarm(alarms.first.id);
       context.read<EditAlarmsCubit>().clearAlarms();
       _goBackToDefaultMode(context);
     }
@@ -139,10 +129,6 @@ class Base extends StatelessWidget {
                   borderRadius: BorderRadius.only(
                       topRight: Radius.circular(30),
                       topLeft: Radius.circular(30)),
-                  // boxShadow: [
-                  //   BoxShadow(
-                  //       color: Colors.black38, spreadRadius: 0, blurRadius: 10),
-                  // ],
                 ),
                 child: ClipRRect(
                   borderRadius: const BorderRadius.only(
@@ -192,10 +178,6 @@ class Base extends StatelessWidget {
                   borderRadius: BorderRadius.only(
                       topRight: Radius.circular(30),
                       topLeft: Radius.circular(30)),
-                  // boxShadow: [
-                  //   BoxShadow(
-                  //       color: Colors.black38, spreadRadius: 0, blurRadius: 10),
-                  // ],
                 ),
                 child: ClipRRect(
                   borderRadius: const BorderRadius.only(

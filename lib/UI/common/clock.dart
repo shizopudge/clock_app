@@ -53,8 +53,8 @@ class Clock extends StatelessWidget {
         ),
         if (timezone != null)
           Text(
-            timezone,
-            style: AppFonts.titleStyle,
+            'Timezone: $timezone',
+            style: AppFonts.labelStyle,
           ),
       ],
     );

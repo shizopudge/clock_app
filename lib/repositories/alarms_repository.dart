@@ -25,7 +25,11 @@ abstract class IAlarmsRepository {
 
   Future<void> launchAlarm(String id);
 
+  Future<void> launchAlarms(List<AlarmModel> alarms);
+
   Future<void> deleteAlarm(String id);
+
+  Future<void> deleteAlarms(List<String> ids);
 
   bool? checkIsRepeatingAlarm(String id);
 
@@ -33,6 +37,15 @@ abstract class IAlarmsRepository {
 }
 
 class AlarmsRepository extends IAlarmsRepository {
+  static final AlarmsRepository _alarmsRepository =
+      AlarmsRepository._internal();
+
+  factory AlarmsRepository() {
+    return _alarmsRepository;
+  }
+
+  AlarmsRepository._internal();
+
   @override
   Future<void> createAlarm({
     required String? name,
@@ -162,12 +175,48 @@ class AlarmsRepository extends IAlarmsRepository {
   }
 
   @override
+  Future<void> launchAlarms(List<AlarmModel> alarms) async {
+    final bool isBoxOpened = Hive.isBoxOpen(DatabaseHelper.alarmsBox);
+    if (isBoxOpened) {
+      List<AlarmModel> updatedAlarms = [];
+      Map<dynamic, AlarmModel> updatedAlarmsMap = {};
+      final Box<AlarmModel> alarmsBox =
+          Hive.box<AlarmModel>(DatabaseHelper.alarmsBox);
+      for (AlarmModel alarm in alarms) {
+        if (alarm.islaunched) {
+          updatedAlarms.add(alarm.copyWith(islaunched: false));
+        } else {
+          updatedAlarms.add(alarm.copyWith(islaunched: true));
+        }
+      }
+      for (AlarmModel alarm in updatedAlarms) {
+        updatedAlarmsMap[alarm.id] = alarm;
+      }
+      await alarmsBox.putAll(updatedAlarmsMap);
+    } else {
+      debugPrint('Alarms box is closed!');
+    }
+  }
+
+  @override
   Future<void> deleteAlarm(String id) async {
     final bool isBoxOpened = Hive.isBoxOpen(DatabaseHelper.alarmsBox);
     if (isBoxOpened) {
       final Box<AlarmModel> alarmsBox =
           Hive.box<AlarmModel>(DatabaseHelper.alarmsBox);
       await alarmsBox.delete(id);
+    } else {
+      debugPrint('Alarms box is closed!');
+    }
+  }
+
+  @override
+  Future<void> deleteAlarms(List<String> ids) async {
+    final bool isBoxOpened = Hive.isBoxOpen(DatabaseHelper.alarmsBox);
+    if (isBoxOpened) {
+      final Box<AlarmModel> alarmsBox =
+          Hive.box<AlarmModel>(DatabaseHelper.alarmsBox);
+      await alarmsBox.deleteAll(ids);
     } else {
       debugPrint('Alarms box is closed!');
     }

@@ -2,20 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../bloc/add_edit_alarm/add_edit_alarm_cubit.dart';
-import '../../../../bloc/alarms/alarms_bloc.dart';
 import '../../../../core/utils.dart';
 
+import '../../../../repositories/alarms_repository.dart';
 import '../widgets/alarm_picker.dart';
 import '../../../common/alarm_schedule.dart';
 import '../widgets/alarm_settings.dart';
 
 class AddEditAlarmView extends StatefulWidget {
   final bool isAddAlarm;
+  final AlarmsRepository _alarmsRepository;
 
-  const AddEditAlarmView({
-    super.key,
-    required this.isAddAlarm,
-  });
+  const AddEditAlarmView(
+      {super.key,
+      required this.isAddAlarm,
+      required AlarmsRepository alarmsRepository})
+      : _alarmsRepository = alarmsRepository;
 
   @override
   State<AddEditAlarmView> createState() => _AddEditAlarmViewState();
@@ -68,24 +70,46 @@ class _AddEditAlarmViewState extends State<AddEditAlarmView> {
 
   void _onSave(AddEditAlarmState addEditAlarmState) {
     if (widget.isAddAlarm) {
-      context.read<AlarmsBloc>().add(
-            AlarmsCreateAlarmEvent(
-              name: addEditAlarmState.name,
-              time: DateTime(
-                  0, 0, 0, addEditAlarmState.hour, addEditAlarmState.minute),
-              daysOfTheWeek: addEditAlarmState.weekdays,
-            ),
-          );
+      widget._alarmsRepository
+          .createAlarm(
+        name: addEditAlarmState.name,
+        time: DateTime(
+          0,
+          0,
+          0,
+          addEditAlarmState.hour,
+          addEditAlarmState.minute,
+        ),
+        weekdays: addEditAlarmState.weekdays,
+      )
+          .whenComplete(() {
+        AppUtils.showSnackBar(
+          context,
+          'Alarm clock successfully set to ${AppUtils.formatTime(DateTime(0, 0, 0, addEditAlarmState.hour, addEditAlarmState.minute))}',
+        );
+        Navigator.pop(context);
+      });
     } else {
-      context.read<AlarmsBloc>().add(
-            AlarmsUpdateAlarmEvent(
-              id: addEditAlarmState.id ?? '',
-              name: addEditAlarmState.name,
-              time: DateTime(
-                  0, 0, 0, addEditAlarmState.hour, addEditAlarmState.minute),
-              daysOfTheWeek: addEditAlarmState.weekdays,
-            ),
-          );
+      widget._alarmsRepository
+          .updateAlarm(
+        id: addEditAlarmState.id ?? '',
+        name: addEditAlarmState.name,
+        time: DateTime(
+          0,
+          0,
+          0,
+          addEditAlarmState.hour,
+          addEditAlarmState.minute,
+        ),
+        weekdays: addEditAlarmState.weekdays,
+      )
+          .whenComplete(() {
+        AppUtils.showSnackBar(
+          context,
+          'Alarm clock successfully set to ${AppUtils.formatTime(DateTime(0, 0, 0, addEditAlarmState.hour, addEditAlarmState.minute))}',
+        );
+        Navigator.pop(context);
+      });
     }
   }
 
@@ -93,38 +117,26 @@ class _AddEditAlarmViewState extends State<AddEditAlarmView> {
   Widget build(BuildContext context) {
     final AddEditAlarmState addEditAlarmState =
         context.watch<AddEditAlarmCubit>().state;
-    return BlocListener<AlarmsBloc, AlarmsState>(
-      listenWhen: (previous, current) {
-        return current.alarms != previous.alarms;
-      },
-      listener: (context, state) {
-        AppUtils.showSnackBar(
-          context,
-          'Alarm clock successfully set to ${AppUtils.formatTime(DateTime(0, 0, 0, addEditAlarmState.hour, addEditAlarmState.minute))}',
-        );
-        Navigator.pop(context);
-      },
-      child: Scaffold(
-        body: Column(
-          children: [
-            Expanded(
-              child: AlarmPicker(
-                hourController: _hourController,
-                minuteController: _minuteController,
-                currentHour: addEditAlarmState.hour,
-                currentMinute: addEditAlarmState.minute,
-                onHourChanged: _onHourChanged,
-                onMinuteChanged: _onMinuteChanged,
-              ),
+    return Scaffold(
+      body: Column(
+        children: [
+          Expanded(
+            child: AlarmPicker(
+              hourController: _hourController,
+              minuteController: _minuteController,
+              currentHour: addEditAlarmState.hour,
+              currentMinute: addEditAlarmState.minute,
+              onHourChanged: _onHourChanged,
+              onMinuteChanged: _onMinuteChanged,
             ),
-            const AlarmSchedule(),
-            AlarmSettings(
-              onSave: () => _onSave(addEditAlarmState),
-              nameController: _nameController,
-              isAddAlarm: widget.isAddAlarm,
-            ),
-          ],
-        ),
+          ),
+          const AlarmSchedule(),
+          AlarmSettings(
+            onSave: () => _onSave(addEditAlarmState),
+            nameController: _nameController,
+            isAddAlarm: widget.isAddAlarm,
+          ),
+        ],
       ),
     );
   }

@@ -2,21 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../bloc/add_edit_alarm/add_edit_alarm_cubit.dart';
-import '../../bloc/alarms/alarms_bloc.dart';
 import '../../bloc/edit_alarms/edit_alarms_cubit.dart';
 import '../../constants/ui_constants.dart';
 import '../../core/router.dart';
 import '../../core/utils.dart';
 import '../../models/alarm.dart';
+import '../../repositories/alarms_repository.dart';
 import '../../theme/fonts.dart';
 import '../../theme/pallete.dart';
 
 class AlarmCard extends StatelessWidget {
   final AlarmModel alarm;
+  final AlarmsRepository _alarmsRepository;
+
   const AlarmCard({
     super.key,
     required this.alarm,
-  });
+    required AlarmsRepository alarmsRepository,
+  }) : _alarmsRepository = alarmsRepository;
 
   void _onAddOneAlarm(BuildContext context) =>
       context.read<EditAlarmsCubit>().addOneAlarm(alarm);
@@ -94,11 +97,7 @@ class AlarmCard extends StatelessWidget {
                         Switch.adaptive(
                           value: alarm.islaunched,
                           onChanged: (isLaunched) => !editAlarmsState.isEditMode
-                              ? context.read<AlarmsBloc>().add(
-                                    AlarmsLaunchAlarmEvent(
-                                      id: alarm.id,
-                                    ),
-                                  )
+                              ? _alarmsRepository.launchAlarm(alarm.id)
                               : null,
                           inactiveTrackColor: Colors.grey.shade700,
                           inactiveThumbColor: Colors.black45,
@@ -122,21 +121,6 @@ class AlarmCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          FutureBuilder(
-                            future: AppUtils.getNextAlarmRingDateTime(alarm),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.done) {
-                                if (snapshot.data != null) {
-                                  return Text(snapshot.data!.toIso8601String());
-                                } else {
-                                  return Text('No data');
-                                }
-                              } else {
-                                return CircularProgressIndicator();
-                              }
-                            },
-                          ),
                           Text(
                             alarm.name ?? '',
                             overflow: TextOverflow.ellipsis,
@@ -157,11 +141,7 @@ class AlarmCard extends StatelessWidget {
                         Switch.adaptive(
                           value: alarm.islaunched,
                           onChanged: (isLaunched) => !editAlarmsState.isEditMode
-                              ? context.read<AlarmsBloc>().add(
-                                    AlarmsLaunchAlarmEvent(
-                                      id: alarm.id,
-                                    ),
-                                  )
+                              ? _alarmsRepository.launchAlarm(alarm.id)
                               : null,
                           inactiveTrackColor: Colors.grey.shade700,
                           inactiveThumbColor: Colors.black45,
