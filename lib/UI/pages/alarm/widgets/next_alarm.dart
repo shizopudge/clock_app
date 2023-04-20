@@ -27,7 +27,7 @@ class NextAlarm extends StatelessWidget {
               text:
                   AppUtils.formatSecondsBeforeNextAlarm(secondsBeforeNextAlarm),
               style: AppFonts.titleStyle.copyWith(
-                color: Pallete.blueColor,
+                color: PalleteLight.actionColor,
               ),
             ),
           ],

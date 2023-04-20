@@ -6,27 +6,27 @@ part of 'alarm.dart';
 // TypeAdapterGenerator
 // **************************************************************************
 
-class AlarmModelAdapter extends TypeAdapter<AlarmModel> {
+class AlarmAdapter extends TypeAdapter<Alarm> {
   @override
   final int typeId = 0;
 
   @override
-  AlarmModel read(BinaryReader reader) {
+  Alarm read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return AlarmModel(
+    return Alarm(
       id: fields[0] as String,
       name: fields[1] as String?,
       time: fields[2] as DateTime,
       weekdays: (fields[3] as List).cast<String>(),
-      islaunched: fields[4] as bool,
+      isEnabled: fields[4] as bool,
     );
   }
 
   @override
-  void write(BinaryWriter writer, AlarmModel obj) {
+  void write(BinaryWriter writer, Alarm obj) {
     writer
       ..writeByte(5)
       ..writeByte(0)
@@ -38,7 +38,7 @@ class AlarmModelAdapter extends TypeAdapter<AlarmModel> {
       ..writeByte(3)
       ..write(obj.weekdays)
       ..writeByte(4)
-      ..write(obj.islaunched);
+      ..write(obj.isEnabled);
   }
 
   @override
@@ -47,7 +47,7 @@ class AlarmModelAdapter extends TypeAdapter<AlarmModel> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is AlarmModelAdapter &&
+      other is AlarmAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

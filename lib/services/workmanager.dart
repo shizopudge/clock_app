@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:workmanager/workmanager.dart';
 
-import '../models/alarm.dart';
+import '../models/alarm/alarm.dart';
 import '../repositories/alarms_repository.dart';
 import '../storage/database.dart';
 import 'alarm_services.dart';
@@ -16,8 +16,8 @@ void callbackDispatcher() {
           debugPrint('Schedule is running! ${DateTime.now()}');
           await DatabaseHelper.initDatabase();
           await NotificationServices.initializeNotifications();
-          final List<AlarmModel> launchedAlarms =
-              await AlarmsRepository().getLaunchedAlarms();
+          final List<Alarm> launchedAlarms =
+              AlarmsRepository().getEnabledAlarms();
           await AlarmServices()
               .scheduleAlarms(
                 launchedAlarms,

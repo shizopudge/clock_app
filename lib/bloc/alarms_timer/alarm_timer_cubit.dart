@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../models/alarm.dart';
+import '../../models/alarm/alarm.dart';
 import '../../repositories/alarms_repository.dart';
 
 part 'alarm_timer_state.dart';
@@ -19,15 +19,14 @@ class AlarmTimerCubit extends Cubit<AlarmTimerState> {
 
   Future<void> startAlarmTimer() async {
     _timer?.cancel();
-    final List<AlarmModel> alarms = await _alarmsRepository.getAlarms();
+    final List<Alarm> alarms = _alarmsRepository.getAlarms();
     if (alarms.isEmpty) {
       emit(
         const AlarmTimerState(),
       );
       return;
     }
-    final List<AlarmModel> launchedAlarms =
-        await _alarmsRepository.getLaunchedAlarms();
+    final List<Alarm> launchedAlarms = _alarmsRepository.getEnabledAlarms();
     if (alarms.isNotEmpty && launchedAlarms.isEmpty) {
       emit(
         const AlarmTimerState(text: 'All alarms are disabled'),

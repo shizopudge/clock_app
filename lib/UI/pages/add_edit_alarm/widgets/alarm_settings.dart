@@ -1,30 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../../constants/ui_constants.dart';
+import '../../../../storage/database.dart';
 import '../../../../theme/pallete.dart';
+import '../../../../theme/theme.dart';
 import '../../../common/name_text_field.dart';
 import '../../../common/save_button.dart';
 
 class AlarmSettings extends StatelessWidget {
   final TextEditingController nameController;
-  final bool isAddAlarm;
   final VoidCallback onSave;
   const AlarmSettings({
     super.key,
     required this.nameController,
-    required this.isAddAlarm,
     required this.onSave,
   });
 
   @override
   Widget build(BuildContext context) {
+    final String theme = Hive.box(DatabaseHelper.settingsBox)
+        .get('theme', defaultValue: AppTheme.defaultTheme);
     return Container(
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.only(
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(21),
           topRight: Radius.circular(21),
         ),
-        color: Pallete.blackColor,
+        color: theme == AppTheme.darkThemeName ? PalleteDark.fullBlack : null,
+        gradient:
+            theme == AppTheme.lightThemeName ? PalleteLight.alarmCardBg : null,
       ),
       child: Column(
         children: [
@@ -51,8 +56,9 @@ class AlarmSettings extends StatelessWidget {
                     Icons.arrow_back,
                   ),
                 ),
-                SaveButton(
+                ActionButton(
                   onTap: onSave,
+                  text: 'Save',
                 ),
               ],
             ),

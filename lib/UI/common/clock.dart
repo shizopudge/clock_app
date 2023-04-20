@@ -35,7 +35,6 @@ class Clock extends StatelessWidget {
           children: [
             TimeWidget(
               time: time.hour,
-              color: Colors.white,
             ),
             Text(
               ':',
@@ -43,7 +42,6 @@ class Clock extends StatelessWidget {
             ),
             TimeWidget(
               time: time.minute,
-              color: Colors.white,
             ),
             Text(
               ':',
@@ -51,7 +49,6 @@ class Clock extends StatelessWidget {
             ),
             TimeWidget(
               time: time.second,
-              color: Colors.white,
             ),
           ],
         ),

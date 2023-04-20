@@ -33,7 +33,7 @@ class NameTextField extends StatelessWidget {
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: AppFonts.titleStyle,
-          errorStyle: AppFonts.labelStyle.copyWith(color: Pallete.redColor),
+          errorStyle: AppFonts.labelStyle.copyWith(color: Colors.red),
           contentPadding: const EdgeInsets.all(
             4,
           ),
@@ -42,12 +42,12 @@ class NameTextField extends StatelessWidget {
           counterText: '',
           enabledBorder: const UnderlineInputBorder(
             borderSide: BorderSide(
-              color: Pallete.whiteColor,
+              color: PalleteLight.actionColor,
             ),
           ),
           focusedBorder: const UnderlineInputBorder(
             borderSide: BorderSide(
-              color: Pallete.whiteColor,
+              color: PalleteLight.actionColor,
             ),
           ),
         ),

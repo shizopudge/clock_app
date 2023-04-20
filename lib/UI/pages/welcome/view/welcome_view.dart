@@ -1,52 +1,56 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 
-import '../../../../storage/database.dart';
 import '../../../../theme/fonts.dart';
+import '../../../../theme/pallete.dart';
+import '../../../common/save_button.dart';
+import '../controller/welcome_controller.dart';
 
 class WelcomeView extends StatelessWidget {
-  const WelcomeView({super.key});
-
-  static void _onLetsStartTap() async {
-    final bool isBoxOpened = Hive.isBoxOpen(DatabaseHelper.settingsBox);
-    if (isBoxOpened) {
-      final Box settingsBox = Hive.box(DatabaseHelper.settingsBox);
-      await settingsBox.put('isFirstLaunch', false);
-    }
-  }
+  final WelcomeController _welcomeController;
+  const WelcomeView({super.key, required WelcomeController welcomeController})
+      : _welcomeController = welcomeController;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Center(
-            child: Text(
-              'Welcome',
-              style: AppFonts.headerStyle,
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: PalleteLight.backgroundGradient,
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/images/alarm3D.png',
               ),
-              margin: const EdgeInsets.all(15.0),
-              child: InkWell(
-                onTap: _onLetsStartTap,
-                borderRadius: BorderRadius.circular(12),
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Text(
-                    'Lets start!',
-                    style: AppFonts.labelStyle,
-                  ),
+              Text(
+                'Welcome',
+                style:
+                    AppFonts.headerStyle.copyWith(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Text(
+                  'Thanks for installing my app. This app has alarm functionality, habit tracker and timer, hope you enjoy it. I wish you a pleasant use!',
+                  textAlign: TextAlign.justify,
+                  style:
+                      AppFonts.titleStyle.copyWith(fontWeight: FontWeight.bold),
                 ),
               ),
-            ),
+              const SizedBox(
+                height: 8,
+              ),
+              ActionButton(
+                onTap: _welcomeController.onLetsStartTap,
+                text: 'Lets start!',
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

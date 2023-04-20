@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
 
-import '../UI/pages/add_alarm/widgets/weekdays.dart';
+import '../UI/pages/add_edit_alarm/widgets/weekdays.dart';
 import '../UI/pages/alarm/view/alarm_view.dart';
+import '../UI/pages/habits/view/habit_view.dart';
 import '../theme/fonts.dart';
 import '../theme/pallete.dart';
+import 'core_constants.dart';
 
 class UIConstants {
-  static final nestedScrollViewKey = GlobalKey<NestedScrollViewState>();
+  static final alarmsNestedScrollViewKey = GlobalKey<NestedScrollViewState>();
 
-  static const pages = [
-    AlarmView(),
-    SizedBox(),
+  static final habitsNestedScrollViewKey = GlobalKey<NestedScrollViewState>();
+
+  static final pages = [
+    AlarmView(
+      alarmController: CoreConstants.alarmController,
+    ),
+    HabitView(
+      habitController: CoreConstants.habitController,
+    ),
+    const SizedBox(),
   ];
 
   static const List<String> daysList = [
@@ -22,11 +31,6 @@ class UIConstants {
     'Sat',
     'Sun'
   ];
-
-  static AppBar appBarDefault() => AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-      );
 
   static List<Widget> daysOfTheWeek() => List.generate(
         7,
@@ -52,6 +56,15 @@ class UIConstants {
         Icons.update_rounded,
       ),
     ),
+    BottomNavigationBarItem(
+      label: 'Timer',
+      icon: Icon(
+        Icons.timer,
+      ),
+      activeIcon: Icon(
+        Icons.timer,
+      ),
+    ),
   ];
 
   static List<Widget> launchedDays(List<String> days) => List.generate(
@@ -63,14 +76,14 @@ class UIConstants {
               padding: const EdgeInsets.all(2.0),
               child: Column(
                 children: [
-                  CircleAvatar(
+                  const CircleAvatar(
                     radius: 1.2,
-                    backgroundColor: Pallete.blueColor,
+                    backgroundColor: PalleteLight.actionColor,
                   ),
                   Text(
                     day,
                     style: AppFonts.labelStyle.copyWith(
-                      color: Pallete.blueColor,
+                      color: PalleteLight.actionColor,
                       fontSize: 11,
                     ),
                   ),
@@ -97,48 +110,72 @@ class UIConstants {
         return Weekdays(
           day: 'Mon',
           dayLetter: 'M',
-          style: AppFonts.labelStyle.copyWith(color: Pallete.blueColor),
+          style: AppFonts.labelStyle.copyWith(
+            color: PalleteLight.actionColor,
+            fontWeight: FontWeight.bold,
+          ),
         );
       case 1:
         return Weekdays(
           day: 'Tue',
           dayLetter: 'T',
-          style: AppFonts.labelStyle.copyWith(color: Pallete.blueColor),
+          style: AppFonts.labelStyle.copyWith(
+            color: PalleteLight.actionColor,
+            fontWeight: FontWeight.bold,
+          ),
         );
       case 2:
         return Weekdays(
           day: 'Wed',
           dayLetter: 'W',
-          style: AppFonts.labelStyle.copyWith(color: Pallete.blueColor),
+          style: AppFonts.labelStyle.copyWith(
+            color: PalleteLight.actionColor,
+            fontWeight: FontWeight.bold,
+          ),
         );
       case 3:
         return Weekdays(
           day: 'Thu',
           dayLetter: 'T',
-          style: AppFonts.labelStyle.copyWith(color: Pallete.blueColor),
+          style: AppFonts.labelStyle.copyWith(
+            color: PalleteLight.actionColor,
+            fontWeight: FontWeight.bold,
+          ),
         );
       case 4:
         return Weekdays(
           day: 'Fri',
           dayLetter: 'F',
-          style: AppFonts.labelStyle.copyWith(color: Pallete.blueColor),
+          style: AppFonts.labelStyle.copyWith(
+            color: PalleteLight.actionColor,
+            fontWeight: FontWeight.bold,
+          ),
         );
       case 5:
         return Weekdays(
           day: 'Sat',
           dayLetter: 'S',
-          style: AppFonts.labelStyle.copyWith(color: Pallete.blueGreyColor),
+          style: AppFonts.labelStyle.copyWith(
+            color: Colors.blueGrey,
+            fontWeight: FontWeight.bold,
+          ),
         );
       case 6:
         return Weekdays(
           day: 'Sun',
           dayLetter: 'S',
-          style: AppFonts.labelStyle.copyWith(color: Pallete.redColor),
+          style: AppFonts.labelStyle.copyWith(
+            color: Colors.red,
+            fontWeight: FontWeight.bold,
+          ),
         );
       default:
         return Text(
           '?',
-          style: AppFonts.labelStyle.copyWith(color: Pallete.redColor),
+          style: AppFonts.labelStyle.copyWith(
+            color: Colors.red,
+            fontWeight: FontWeight.bold,
+          ),
         );
     }
   }

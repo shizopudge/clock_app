@@ -3,14 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../bloc/alarm_view/alarm_view_cubit.dart';
 import '../../../../bloc/alarms_timer/alarm_timer_cubit.dart';
-import '../../../../core/router.dart';
-import '../../../../core/utils.dart';
-import '../../../../models/alarm.dart';
+import '../../../../models/alarm/alarm.dart';
 import '../../../../theme/fonts.dart';
-import '../../../common/add_button.dart';
 import '../../../common/clock.dart';
-import 'alarm_popup.dart';
-import 'filter_popup.dart';
+import '../../../common/filter_popup.dart';
+import '../../../common/menu_popup.dart';
+import '../alarm_controller/alarm_controller.dart';
 import 'next_alarm.dart';
 
 class AlarmAppBarCubit extends Cubit<bool> {
@@ -23,30 +21,16 @@ class AlarmAppBarCubit extends Cubit<bool> {
 
 class AlarmAppBar extends StatelessWidget {
   final double height;
-  final List<AlarmModel> alarms;
-  final List<AlarmModel> shownAlarms;
-  const AlarmAppBar({
-    super.key,
-    required this.height,
-    required this.alarms,
-    required this.shownAlarms,
-  });
-
-  void _onChanged(int editAlarmsLength, BuildContext context) {
-    if (editAlarmsLength == alarms.length) {
-      context.read<AlarmViewCubit>().clearAlarms();
-    } else {
-      context.read<AlarmViewCubit>().setAllAlarms(shownAlarms);
-    }
-  }
-
-  void _goToAddAlarm(BuildContext context) {
-    if (alarms.length == 100) {
-      AppUtils.showSnackBar(context, 'You cannot create more than 100 alarms.');
-    } else {
-      AppRouter.navigateWithSlideTransition(context, AppRouter.addAlarmPage);
-    }
-  }
+  final List<Alarm> alarms;
+  final List<Alarm> shownAlarms;
+  final AlarmController _alarmController;
+  const AlarmAppBar(
+      {super.key,
+      required this.height,
+      required this.alarms,
+      required this.shownAlarms,
+      required AlarmController alarmController})
+      : _alarmController = alarmController;
 
   @override
   Widget build(BuildContext context) {
@@ -72,9 +56,7 @@ class AlarmAppBar extends StatelessWidget {
               50,
             ),
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: alarmViewState.isEditMode
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -84,15 +66,17 @@ class AlarmAppBar extends StatelessWidget {
                             Checkbox(
                               value: alarmViewState
                                       .currentlyChangingAlarms.length ==
-                                  alarms.length,
+                                  shownAlarms.length,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(
                                   8,
                                 ),
                               ),
-                              onChanged: (value) => _onChanged(
-                                alarmViewState.currentlyChangingAlarms.length,
+                              onChanged: (value) => _alarmController.onChanged(
                                 context,
+                                editAlarmsLength: alarmViewState
+                                    .currentlyChangingAlarms.length,
+                                shownAlarms: shownAlarms,
                               ),
                             ),
                             Text(
@@ -116,7 +100,9 @@ class AlarmAppBar extends StatelessWidget {
                               ),
                             ),
                             const FilterPopup(),
-                            const AlarmPopup(),
+                            MenuPopup(
+                              isListEmpty: alarms.isEmpty,
+                            ),
                           ],
                         ),
                       ],
@@ -136,11 +122,20 @@ class AlarmAppBar extends StatelessWidget {
                         ),
                         Row(
                           children: [
-                            AddButton(
-                              onTap: () => _goToAddAlarm(context),
+                            IconButton(
+                              onPressed: () => _alarmController.goToAddAlarm(
+                                context,
+                                alarms: alarms,
+                              ),
+                              icon: const Icon(
+                                Icons.add_alarm_rounded,
+                                size: 32,
+                              ),
                             ),
                             if (alarms.isNotEmpty) const FilterPopup(),
-                            if (alarms.isNotEmpty) const AlarmPopup(),
+                            MenuPopup(
+                              isListEmpty: alarms.isEmpty,
+                            ),
                           ],
                         ),
                       ],

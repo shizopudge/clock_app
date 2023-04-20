@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import '../../theme/fonts.dart';
 import '../../theme/pallete.dart';
 
-class SaveButton extends StatelessWidget {
+class ActionButton extends StatelessWidget {
   final VoidCallback onTap;
-  const SaveButton({
+  final String text;
+  const ActionButton({
     super.key,
     required this.onTap,
+    required this.text,
   });
 
   @override
@@ -20,14 +22,17 @@ class SaveButton extends StatelessWidget {
             12,
           ),
         ),
-        backgroundColor: Pallete.blueColor,
+        backgroundColor: PalleteLight.actionColor,
         padding: const EdgeInsets.all(8),
       ),
-      child: Text(
-        'Save',
-        style: AppFonts.titleStyle.copyWith(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
+      child: Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: Text(
+          text,
+          style: AppFonts.titleStyle.copyWith(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );

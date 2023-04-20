@@ -5,82 +5,154 @@ import '../storage/database.dart';
 import 'fonts.dart';
 import 'pallete.dart';
 
-abstract class IAppTheme {
-  Future<String> getTheme();
-  Future<String> toggleTheme();
-}
+class AppTheme {
+  static final AppTheme _appTheme = AppTheme._internal();
 
-class AppTheme extends IAppTheme {
+  factory AppTheme() {
+    return _appTheme;
+  }
+
+  AppTheme._internal();
+
   static const String defaultTheme = 'dark';
 
-  static final ThemeData darkTheme = ThemeData.dark().copyWith(
-    scaffoldBackgroundColor: Pallete.greyColor,
+  static const String darkThemeName = 'dark';
+  static const String lightThemeName = 'light';
+
+  static final ThemeData lightTheme = ThemeData.dark().copyWith(
+    scaffoldBackgroundColor: Colors.transparent,
     colorScheme: const ColorScheme.dark().copyWith(
-      secondary: Pallete.blueColor,
+      secondary: PalleteLight.actionColor,
+    ),
+    scrollbarTheme: const ScrollbarThemeData(
+      thumbColor: MaterialStatePropertyAll(PalleteLight.actionColor),
+    ),
+    listTileTheme: const ListTileThemeData(
+      tileColor: PalleteLight.backgroundColor,
     ),
     popupMenuTheme: const PopupMenuThemeData(
-      color: Pallete.fullBlackColor,
+      color: PalleteLight.backgroundColor,
+    ),
+    iconTheme: const IconThemeData(
+      color: PalleteLight.actionColor,
     ),
     snackBarTheme: SnackBarThemeData(
-      backgroundColor: Pallete.fullBlackColor,
+      backgroundColor: PalleteLight.actionColor,
       contentTextStyle: AppFonts.labelStyle,
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
     ),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(-12),
+          bottomRight: Radius.circular(-12),
+        ),
+      ),
+    ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
-      backgroundColor: Pallete.fullBlackColor,
+      backgroundColor: PalleteLight.backgroundColor,
       type: BottomNavigationBarType.fixed,
       showSelectedLabels: true,
       showUnselectedLabels: false,
       selectedLabelStyle: AppFonts.labelStyle.copyWith(
         letterSpacing: 1.2,
       ),
-      unselectedItemColor: Pallete.whiteColor,
-      selectedItemColor: Pallete.blueColor,
+      unselectedItemColor: Colors.grey,
+      selectedItemColor: PalleteLight.actionColor,
       elevation: 0,
       unselectedIconTheme: const IconThemeData(
         color: Colors.white,
         opacity: .85,
       ),
-      selectedIconTheme: IconThemeData(
-        color: Pallete.blueColor,
+      selectedIconTheme: const IconThemeData(
+        color: PalleteLight.actionColor,
         opacity: 1,
       ),
     ),
   );
 
-  static final ThemeData lightTheme = ThemeData.light();
+  static final ThemeData darkTheme = ThemeData.dark().copyWith(
+    scaffoldBackgroundColor: PalleteDark.backgroundColor,
+    colorScheme: const ColorScheme.dark().copyWith(
+      secondary: PalleteLight.actionColor,
+    ),
+    scrollbarTheme: const ScrollbarThemeData(
+      thumbColor: MaterialStatePropertyAll(PalleteLight.actionColor),
+    ),
+    listTileTheme: const ListTileThemeData(
+      tileColor: PalleteDark.cardColor,
+    ),
+    popupMenuTheme: PopupMenuThemeData(
+      color: PalleteDark.backgroundColor,
+    ),
+    cardColor: PalleteDark.cardColor,
+    iconTheme: const IconThemeData(
+      color: PalleteLight.actionColor,
+    ),
+    snackBarTheme: SnackBarThemeData(
+      backgroundColor: PalleteDark.fullBlack,
+      contentTextStyle: AppFonts.labelStyle,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+    ),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(-12),
+          bottomRight: Radius.circular(-12),
+        ),
+      ),
+    ),
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      backgroundColor: PalleteDark.fullBlack,
+      type: BottomNavigationBarType.fixed,
+      showSelectedLabels: true,
+      showUnselectedLabels: false,
+      selectedLabelStyle: AppFonts.labelStyle.copyWith(
+        letterSpacing: 1.2,
+      ),
+      unselectedItemColor: Colors.grey,
+      selectedItemColor: PalleteLight.actionColor,
+      elevation: 0,
+      unselectedIconTheme: const IconThemeData(
+        color: Colors.white,
+        opacity: .85,
+      ),
+      selectedIconTheme: const IconThemeData(
+        color: PalleteLight.actionColor,
+        opacity: 1,
+      ),
+    ),
+  );
 
-  @override
-  Future<String> getTheme() async {
+  static Future<void> toggleTheme() async {
     final bool isBoxOpened = Hive.isBoxOpen(DatabaseHelper.settingsBox);
     if (isBoxOpened) {
       final Box settingsBox = Hive.box(DatabaseHelper.settingsBox);
-      final String theme =
-          await settingsBox.get('theme', defaultValue: defaultTheme);
-      return theme;
-    } else {
-      return defaultTheme;
+      final String currentTheme =
+          settingsBox.get('theme', defaultValue: defaultTheme);
+      if (currentTheme == darkThemeName) {
+        await settingsBox.put('theme', lightThemeName);
+      } else {
+        await settingsBox.put('theme', darkThemeName);
+      }
     }
   }
 
-  @override
-  Future<String> toggleTheme() async {
-    final bool isBoxOpened = Hive.isBoxOpen(DatabaseHelper.settingsBox);
-    if (isBoxOpened) {
-      final Box settingsBox = Hive.box(DatabaseHelper.settingsBox);
-      final String theme =
-          await settingsBox.get('theme', defaultValue: defaultTheme);
-      if (theme == 'dark') {
-        await settingsBox.put('theme', 'light');
-      } else {
-        await settingsBox.put('theme', 'dark');
-      }
-      return theme;
+  static ThemeData getCurrentTheme(Box settingsBox) {
+    final String currentTheme =
+        settingsBox.get('theme', defaultValue: defaultTheme);
+    if (currentTheme == darkThemeName) {
+      return darkTheme;
     } else {
-      return defaultTheme;
+      return lightTheme;
     }
   }
 }

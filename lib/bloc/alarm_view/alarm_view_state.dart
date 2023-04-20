@@ -1,21 +1,10 @@
 part of 'alarm_view_cubit.dart';
 
-enum SortType {
-  descending,
-  ascending,
-}
-
-enum FilterType {
-  none,
-  onlyLaunched,
-  onlyOffed,
-}
-
 class AlarmViewCubitState {
   final SortType sort;
   final FilterType filter;
   final bool isEditMode;
-  final List<AlarmModel> currentlyChangingAlarms;
+  final List<Alarm> currentlyChangingAlarms;
 
   AlarmViewCubitState({
     this.sort = SortType.ascending,
@@ -28,7 +17,7 @@ class AlarmViewCubitState {
     SortType? sort,
     FilterType? filter,
     bool? isEditMode,
-    List<AlarmModel>? currentlyChangingAlarms,
+    List<Alarm>? currentlyChangingAlarms,
   }) {
     return AlarmViewCubitState(
       sort: sort ?? this.sort,

@@ -52,7 +52,7 @@ class _WeekdaysState extends State<Weekdays> {
     return InkWell(
       onTap: _onTap,
       radius: 50,
-      splashColor: Pallete.blueGreyColor,
+      splashColor: PalleteLight.actionColor,
       borderRadius: BorderRadius.circular(21),
       child: Stack(
         alignment: Alignment.center,
@@ -68,7 +68,7 @@ class _WeekdaysState extends State<Weekdays> {
                 shape: BoxShape.circle,
                 border: daysOfTheWeek.contains(widget.day)
                     ? Border.all(
-                        color: Pallete.blueColor,
+                        color: PalleteLight.actionColor,
                         width: 1.5,
                       )
                     : null,

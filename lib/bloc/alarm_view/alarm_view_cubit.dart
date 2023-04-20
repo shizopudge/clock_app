@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../models/alarm.dart';
+import '../../core/enums.dart';
+import '../../models/alarm/alarm.dart';
 
 part 'alarm_view_state.dart';
 
@@ -29,7 +30,7 @@ class AlarmViewCubit extends Cubit<AlarmViewCubitState> {
     }
   }
 
-  void addOneAlarm(AlarmModel alarm) {
+  void addOneAlarm(Alarm alarm) {
     if (state.currentlyChangingAlarms.contains(alarm)) {
       emit(state.copyWith(
           currentlyChangingAlarms: [...state.currentlyChangingAlarms]
@@ -40,7 +41,7 @@ class AlarmViewCubit extends Cubit<AlarmViewCubitState> {
     }
   }
 
-  void setAllAlarms(List<AlarmModel> alarms) =>
+  void setAllAlarms(List<Alarm> alarms) =>
       emit(state.copyWith(currentlyChangingAlarms: alarms));
 
   void clearAlarms() => emit(state.copyWith(currentlyChangingAlarms: []));

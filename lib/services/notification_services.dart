@@ -138,7 +138,7 @@ class NotificationServices {
       final bool isRepeatingAlarm =
           AlarmsRepository().checkIsRepeatingAlarm(alarmId) ?? false;
       if (!isRepeatingAlarm) {
-        await AlarmsRepository().launchAlarm(alarmId);
+        await AlarmsRepository().enableAlarm(alarmId);
       }
       debugPrint('SWITCH OFF!');
     }
@@ -163,7 +163,7 @@ class NotificationServices {
       final bool isRepeatingAlarm =
           AlarmsRepository().checkIsRepeatingAlarm(alarmId) ?? false;
       if (!isRepeatingAlarm) {
-        await AlarmsRepository().launchAlarm(alarmId);
+        await AlarmsRepository().enableAlarm(alarmId);
       }
     }
     debugPrint('NOTIFICATION DISPLAYED!');

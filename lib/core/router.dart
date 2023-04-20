@@ -1,7 +1,10 @@
-import 'package:alarm_app/repositories/alarms_repository.dart';
 import 'package:flutter/material.dart';
 
-import '../UI/pages/add_alarm/view/add_edit_alarm_view.dart';
+import '../UI/pages/add_edit_alarm/controller/add_edit_alarm_controller.dart';
+import '../UI/pages/add_edit_alarm/view/add_edit_alarm_view.dart';
+import '../UI/pages/settings/view/settings_view.dart';
+import '../constants/core_constants.dart';
+import '../repositories/alarms_repository.dart';
 
 class AppRouter {
   static final AppRouter _appRouter = AppRouter._internal();
@@ -14,12 +17,20 @@ class AppRouter {
 
   static final Widget addAlarmPage = AddEditAlarmView(
     isAddAlarm: true,
-    alarmsRepository: AlarmsRepository(),
+    addEditAlarmController: AddEditAlarmController(
+      alarmsRepository: AlarmsRepository(),
+    ),
   );
 
   static final Widget editAlarmPage = AddEditAlarmView(
     isAddAlarm: false,
-    alarmsRepository: AlarmsRepository(),
+    addEditAlarmController: AddEditAlarmController(
+      alarmsRepository: AlarmsRepository(),
+    ),
+  );
+
+  static final Widget settingsPage = SettingsView(
+    settingsController: CoreConstants.settingsController,
   );
 
   static void navigateWithSlideTransition(BuildContext context, Widget page) =>

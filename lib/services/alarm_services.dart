@@ -5,7 +5,8 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 
 import '../core/utils.dart';
-import '../models/alarm.dart';
+
+import '../models/alarm/alarm.dart';
 import 'notification_services.dart';
 
 class AlarmServices {
@@ -18,7 +19,7 @@ class AlarmServices {
   AlarmServices._internal();
 
   @pragma('vm:entry-point')
-  Future<void> scheduleAlarms(List<AlarmModel> alarms,
+  Future<void> scheduleAlarms(List<Alarm> alarms,
       {bool isFromWorkmanager = false}) async {
     DateTime alarmTime;
     DateTime preAlarmNotificationTime;
@@ -26,7 +27,7 @@ class AlarmServices {
         .cancelSchedulesByChannelKey('alarm_notifications_channel');
     await AwesomeNotifications()
         .cancelSchedulesByChannelKey('pre_alarm_notifications_channel');
-    for (AlarmModel alarm in alarms) {
+    for (Alarm alarm in alarms) {
       if (alarm.weekdays.isEmpty) {
         alarmTime =
             AppUtils.getNotificationTime(alarm.time.hour, alarm.time.minute);
@@ -143,7 +144,7 @@ class AlarmServices {
     required int alarmNotificationId,
     required int preAlarmNotificationId,
     required DateTime alarmTime,
-    required AlarmModel alarm,
+    required Alarm alarm,
   }) async {
     await NotificationServices.scheduleNotification(
       id: alarmNotificationId,
@@ -177,7 +178,7 @@ class AlarmServices {
     required int alarmNotificationId,
     required int preAlarmNotificationId,
     required DateTime preAlarmNotificationTime,
-    required AlarmModel alarm,
+    required Alarm alarm,
   }) async {
     await NotificationServices.scheduleNotification(
       id: preAlarmNotificationId,

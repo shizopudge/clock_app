@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-import 'UI/base.dart';
+import 'UI/base/controller/base_controller.dart';
+import 'UI/base/view/base.dart';
+import 'UI/pages/welcome/controller/welcome_controller.dart';
 import 'UI/pages/welcome/view/welcome_view.dart';
 import 'core/providers.dart';
 import 'repositories/alarms_repository.dart';
@@ -32,17 +34,21 @@ class MyApp extends StatelessWidget {
       ],
       child: ValueListenableBuilder(
         valueListenable: Hive.box(DatabaseHelper.settingsBox).listenable(),
-        builder: (context, box, _) {
+        builder: (context, settingsBox, _) {
+          final String theme =
+              settingsBox.get('theme', defaultValue: AppTheme.defaultTheme);
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            theme:
-                box.get('theme', defaultValue: AppTheme.defaultTheme) == 'dark'
-                    ? AppTheme.darkTheme
-                    : AppTheme.lightTheme,
-            home: box.get('isFirstLaunch', defaultValue: true)
-                ? const WelcomeView()
+            theme: AppTheme.getCurrentTheme(settingsBox),
+            home: settingsBox.get('isFirstLaunch', defaultValue: true)
+                ? WelcomeView(
+                    welcomeController: WelcomeController(),
+                  )
                 : Base(
-                    alarmsRepository: AlarmsRepository(),
+                    baseController: BaseController(
+                      alarmsRepository: AlarmsRepository(),
+                    ),
+                    theme: theme,
                   ),
           );
         },
