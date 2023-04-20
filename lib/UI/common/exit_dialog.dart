@@ -25,12 +25,25 @@ class ExitDialog extends StatelessWidget {
         style: AppFonts.labelStyle,
       ),
       actions: <Widget>[
-        IconButton(
-          onPressed: () => Navigator.of(context).pop(false),
-          icon: Text(
-            'No',
-            style: AppFonts.labelStyle.copyWith(
-              color: Pallete.blueColor,
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(8),
+            onTap: () => Navigator.of(context).pop(false),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: Pallete.blueColor,
+                ),
+              ),
+              padding: const EdgeInsets.all(8),
+              child: Text(
+                'No',
+                style: AppFonts.labelStyle.copyWith(
+                  color: Pallete.blueColor,
+                ),
+              ),
             ),
           ),
         ),

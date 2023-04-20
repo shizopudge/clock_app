@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../bloc/add_edit_alarm/add_edit_alarm_cubit.dart';
-import '../../bloc/edit_alarms/edit_alarms_cubit.dart';
+import '../../bloc/alarm_view/alarm_view_cubit.dart';
 import '../../constants/ui_constants.dart';
 import '../../core/router.dart';
 import '../../core/utils.dart';
@@ -22,7 +22,7 @@ class AlarmCard extends StatelessWidget {
   }) : _alarmsRepository = alarmsRepository;
 
   void _onAddOneAlarm(BuildContext context) =>
-      context.read<EditAlarmsCubit>().addOneAlarm(alarm);
+      context.read<AlarmViewCubit>().addOneAlarm(alarm);
 
   void _goToEditAlarm(BuildContext context) {
     context.read<AddEditAlarmCubit>().setId(alarm.id);
@@ -30,7 +30,7 @@ class AlarmCard extends StatelessWidget {
     context.read<AddEditAlarmCubit>().setDays(alarm.weekdays);
     context.read<AddEditAlarmCubit>().setHour(alarm.time.hour);
     context.read<AddEditAlarmCubit>().setMinute(alarm.time.minute);
-    AppRouter.goToEditAlarmRoute(context);
+    AppRouter.navigateWithSlideTransition(context, AppRouter.editAlarmPage);
   }
 
   @override
@@ -38,8 +38,8 @@ class AlarmCard extends StatelessWidget {
     final List<Widget> days = UIConstants.launchedDays(
       alarm.weekdays,
     );
-    final EditAlarmsState editAlarmsState =
-        context.watch<EditAlarmsCubit>().state;
+    final AlarmViewCubitState alarmViewState =
+        context.watch<AlarmViewCubit>().state;
     return Card(
       color: Pallete.blackColor,
       shape: RoundedRectangleBorder(
@@ -48,7 +48,7 @@ class AlarmCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 10),
       child: InkWell(
         onTap: () {
-          if (editAlarmsState.isEditMode) {
+          if (alarmViewState.isEditMode) {
             _onAddOneAlarm(context);
           } else {
             _goToEditAlarm(context);
@@ -57,16 +57,17 @@ class AlarmCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(21),
         child: Padding(
           padding: const EdgeInsets.all(15.0),
-          child: editAlarmsState.isEditMode
+          child: alarmViewState.isEditMode
               ? Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        if (editAlarmsState.isEditMode)
+                        if (alarmViewState.isEditMode)
                           Checkbox(
-                            value: editAlarmsState.alarms.contains(alarm),
+                            value: alarmViewState.currentlyChangingAlarms
+                                .contains(alarm),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(
                                 8,
@@ -96,9 +97,7 @@ class AlarmCard extends StatelessWidget {
                         ),
                         Switch.adaptive(
                           value: alarm.islaunched,
-                          onChanged: (isLaunched) => !editAlarmsState.isEditMode
-                              ? _alarmsRepository.launchAlarm(alarm.id)
-                              : null,
+                          onChanged: (isLaunched) {},
                           inactiveTrackColor: Colors.grey.shade700,
                           inactiveThumbColor: Colors.black45,
                           activeColor: Pallete.blueColor,
@@ -140,7 +139,7 @@ class AlarmCard extends StatelessWidget {
                       children: [
                         Switch.adaptive(
                           value: alarm.islaunched,
-                          onChanged: (isLaunched) => !editAlarmsState.isEditMode
+                          onChanged: (isLaunched) => !alarmViewState.isEditMode
                               ? _alarmsRepository.launchAlarm(alarm.id)
                               : null,
                           inactiveTrackColor: Colors.grey.shade700,

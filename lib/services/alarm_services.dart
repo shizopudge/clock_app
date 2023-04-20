@@ -18,10 +18,14 @@ class AlarmServices {
   AlarmServices._internal();
 
   @pragma('vm:entry-point')
-  Future<void> scheduleAlarms(List<AlarmModel> alarms) async {
+  Future<void> scheduleAlarms(List<AlarmModel> alarms,
+      {bool isFromWorkmanager = false}) async {
     DateTime alarmTime;
     DateTime preAlarmNotificationTime;
-    await AwesomeNotifications().cancelAllSchedules();
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('alarm_notifications_channel');
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('pre_alarm_notifications_channel');
     for (AlarmModel alarm in alarms) {
       if (alarm.weekdays.isEmpty) {
         alarmTime =
@@ -130,7 +134,6 @@ class AlarmServices {
         }
       }
     }
-
     final a = await AwesomeNotifications().listScheduledNotifications();
     debugPrint(a.length.toString());
   }
@@ -152,7 +155,7 @@ class AlarmServices {
       actionButtons: [
         NotificationActionButton(
           key: 'Stop',
-          actionType: ActionType.Default,
+          actionType: ActionType.SilentBackgroundAction,
           label: 'Stop',
         ),
       ],
@@ -161,9 +164,10 @@ class AlarmServices {
         'preAlarmNotificationId': preAlarmNotificationId.toString(),
         'alarmId': alarm.id,
       },
+      criticalAlert: true,
       showWhen: false,
       scheduled: true,
-      actionType: ActionType.Default,
+      actionType: ActionType.SilentBackgroundAction,
       notificationCategory: NotificationCategory.Alarm,
     );
   }
@@ -187,7 +191,7 @@ class AlarmServices {
       actionButtons: [
         NotificationActionButton(
           key: 'Switch off',
-          actionType: ActionType.Default,
+          actionType: ActionType.SilentBackgroundAction,
           label:
               alarm.weekdays.isNotEmpty ? 'Turn off this time' : 'Switch off',
         ),
@@ -199,7 +203,7 @@ class AlarmServices {
       },
       showWhen: false,
       scheduled: true,
-      actionType: ActionType.Default,
+      actionType: ActionType.SilentBackgroundAction,
       notificationCategory: NotificationCategory.Event,
     );
   }

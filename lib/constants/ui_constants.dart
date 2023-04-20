@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 
 import '../UI/pages/add_alarm/widgets/weekdays.dart';
 import '../UI/pages/alarm/view/alarm_view.dart';
-import '../UI/pages/stopwatch/view/stopwatch_view.dart';
 import '../theme/fonts.dart';
 import '../theme/pallete.dart';
 
 class UIConstants {
+  static final nestedScrollViewKey = GlobalKey<NestedScrollViewState>();
+
   static const pages = [
     AlarmView(),
-    StopwatchView(),
+    SizedBox(),
   ];
 
   static const List<String> daysList = [
@@ -45,10 +46,10 @@ class UIConstants {
     BottomNavigationBarItem(
       label: 'Habits',
       icon: Icon(
-        Icons.timer_10_rounded,
+        Icons.update_rounded,
       ),
       activeIcon: Icon(
-        Icons.timer_10_rounded,
+        Icons.update_rounded,
       ),
     ),
   ];

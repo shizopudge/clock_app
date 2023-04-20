@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../bloc/alarm_view/alarm_view_cubit.dart';
 import '../../../../bloc/alarms_timer/alarm_timer_cubit.dart';
-import '../../../../bloc/edit_alarms/edit_alarms_cubit.dart';
 import '../../../../core/router.dart';
 import '../../../../core/utils.dart';
 import '../../../../models/alarm.dart';
@@ -10,6 +10,7 @@ import '../../../../theme/fonts.dart';
 import '../../../common/add_button.dart';
 import '../../../common/clock.dart';
 import 'alarm_popup.dart';
+import 'filter_popup.dart';
 import 'next_alarm.dart';
 
 class AlarmAppBarCubit extends Cubit<bool> {
@@ -23,25 +24,27 @@ class AlarmAppBarCubit extends Cubit<bool> {
 class AlarmAppBar extends StatelessWidget {
   final double height;
   final List<AlarmModel> alarms;
+  final List<AlarmModel> shownAlarms;
   const AlarmAppBar({
     super.key,
     required this.height,
     required this.alarms,
+    required this.shownAlarms,
   });
 
   void _onChanged(int editAlarmsLength, BuildContext context) {
     if (editAlarmsLength == alarms.length) {
-      context.read<EditAlarmsCubit>().clearAlarms();
+      context.read<AlarmViewCubit>().clearAlarms();
     } else {
-      context.read<EditAlarmsCubit>().setAllAlarms(alarms);
+      context.read<AlarmViewCubit>().setAllAlarms(shownAlarms);
     }
   }
 
   void _goToAddAlarm(BuildContext context) {
-    if (alarms.length == 200) {
-      AppUtils.showSnackBar(context, 'You cannot create more than 200 alarms.');
+    if (alarms.length == 100) {
+      AppUtils.showSnackBar(context, 'You cannot create more than 100 alarms.');
     } else {
-      AppRouter.goToAddAlarmRoute(context);
+      AppRouter.navigateWithSlideTransition(context, AppRouter.addAlarmPage);
     }
   }
 
@@ -50,8 +53,8 @@ class AlarmAppBar extends StatelessWidget {
     final bool isCollapsed = context.watch<AlarmAppBarCubit>().state;
     final AlarmTimerState alarmTimerState =
         context.watch<AlarmTimerCubit>().state;
-    final EditAlarmsState editAlarmsState =
-        context.watch<EditAlarmsCubit>().state;
+    final AlarmViewCubitState alarmViewState =
+        context.watch<AlarmViewCubit>().state;
     return SliverOverlapAbsorber(
       handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
       sliver: SliverSafeArea(
@@ -72,64 +75,52 @@ class AlarmAppBar extends StatelessWidget {
               padding: const EdgeInsets.symmetric(
                 horizontal: 8,
               ),
-              child: editAlarmsState.isEditMode
-                  ? isCollapsed
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: alarmViewState.isEditMode
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
                           children: [
-                            Row(
-                              children: [
-                                Checkbox(
-                                  value: editAlarmsState.alarms.length ==
-                                      alarms.length,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      8,
-                                    ),
-                                  ),
-                                  onChanged: (value) => _onChanged(
-                                    editAlarmsState.alarms.length,
-                                    context,
-                                  ),
+                            Checkbox(
+                              value: alarmViewState
+                                      .currentlyChangingAlarms.length ==
+                                  alarms.length,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  8,
                                 ),
-                                Text(
-                                  'All',
-                                  style: AppFonts.labelStyle,
-                                ),
-                              ],
+                              ),
+                              onChanged: (value) => _onChanged(
+                                alarmViewState.currentlyChangingAlarms.length,
+                                context,
+                              ),
                             ),
                             Text(
-                              'Selected: ${editAlarmsState.alarms.length}',
-                              style: AppFonts.labelStyle.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                              'All',
+                              style: AppFonts.labelStyle,
                             ),
                           ],
-                        )
-                      : Align(
-                          alignment: Alignment.bottomLeft,
-                          child: Row(
-                            children: [
-                              Checkbox(
-                                value: editAlarmsState.alarms.length ==
-                                    alarms.length,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                    8,
-                                  ),
-                                ),
-                                onChanged: (value) => _onChanged(
-                                  editAlarmsState.alarms.length,
-                                  context,
+                        ),
+                        Row(
+                          children: [
+                            AnimatedOpacity(
+                              duration: const Duration(
+                                milliseconds: 1000,
+                              ),
+                              opacity: isCollapsed ? 1 : 0,
+                              child: Text(
+                                'Selected: ${alarmViewState.currentlyChangingAlarms.length}',
+                                style: AppFonts.labelStyle.copyWith(
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              Text(
-                                'All',
-                                style: AppFonts.labelStyle,
-                              ),
-                            ],
-                          ),
-                        )
+                            ),
+                            const FilterPopup(),
+                            const AlarmPopup(),
+                          ],
+                        ),
+                      ],
+                    )
                   : Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -148,9 +139,8 @@ class AlarmAppBar extends StatelessWidget {
                             AddButton(
                               onTap: () => _goToAddAlarm(context),
                             ),
-                            alarms.isNotEmpty
-                                ? const AlarmPopup()
-                                : const SizedBox(),
+                            if (alarms.isNotEmpty) const FilterPopup(),
+                            if (alarms.isNotEmpty) const AlarmPopup(),
                           ],
                         ),
                       ],
@@ -166,9 +156,9 @@ class AlarmAppBar extends StatelessWidget {
                 opacity: isCollapsed ? 0 : 1,
                 child: SingleChildScrollView(
                   physics: const NeverScrollableScrollPhysics(),
-                  child: editAlarmsState.isEditMode
+                  child: alarmViewState.isEditMode
                       ? Text(
-                          'Selected: ${editAlarmsState.alarms.length}',
+                          'Selected: ${alarmViewState.currentlyChangingAlarms.length}',
                           style: AppFonts.headerStyle,
                         )
                       : Column(

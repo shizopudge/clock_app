@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import 'dart:async';
 
-import '../../bloc/settings/settings_cubit.dart';
+import '../../storage/database.dart';
 import '../../theme/fonts.dart';
 import 'time_widget.dart';
 
@@ -17,12 +18,15 @@ class ClockCubit extends Cubit<DateTime> {
 }
 
 class Clock extends StatelessWidget {
-  const Clock({super.key});
+  const Clock({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     final DateTime time = context.watch<ClockCubit>().state;
-    final String? timezone = context.watch<SettingsCubit>().state.timezone;
+    final String? timezone = Hive.box(DatabaseHelper.settingsBox)
+        .get('timezone', defaultValue: null);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [

@@ -99,4 +99,14 @@ class AppUtils {
         return '?';
     }
   }
+
+  static DateTime convertNotificationScheduleToDateTime(
+      Map<String, dynamic>? schedule) {
+    return DateTime(
+        schedule?['year'] as int,
+        schedule?['month'] as int,
+        schedule?['day'] as int,
+        schedule?['hour'] as int,
+        schedule?['minute'] as int);
+  }
 }

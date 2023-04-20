@@ -21,6 +21,7 @@ void callbackDispatcher() {
           await AlarmServices()
               .scheduleAlarms(
                 launchedAlarms,
+                isFromWorkmanager: true,
               )
               .whenComplete(
                 () => debugPrint(
@@ -47,7 +48,7 @@ class WorkManagerHeleper {
     await Workmanager().registerPeriodicTask(
       'Alarms schedule',
       'Schedule',
-      frequency: const Duration(minutes: 15),
+      frequency: const Duration(hours: 6),
     );
   }
 }

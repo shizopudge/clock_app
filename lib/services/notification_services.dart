@@ -28,6 +28,8 @@ class NotificationServices {
           importance: NotificationImportance.Max,
           enableVibration: false,
           playSound: true,
+          defaultPrivacy: NotificationPrivacy.Public,
+          criticalAlerts: true,
           soundSource: 'resource://raw/alarm',
         ),
         NotificationChannel(
@@ -88,6 +90,8 @@ class NotificationServices {
     final List<NotificationActionButton>? actionButtons,
     final bool scheduled = false,
     final bool showWhen = true,
+    final bool fullScreenIntent = false,
+    final bool criticalAlert = false,
   }) async {
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
@@ -97,6 +101,8 @@ class NotificationServices {
         displayOnForeground: true,
         displayOnBackground: true,
         wakeUpScreen: true,
+        criticalAlert: criticalAlert,
+        fullScreenIntent: fullScreenIntent,
         notificationLayout: notificationLayout,
         category: notificationCategory,
         payload: payload,
@@ -147,10 +153,13 @@ class NotificationServices {
       ReceivedNotification action) async {
     final payload = action.payload ?? {};
     final String alarmId = payload['alarmId'] ?? '';
-    final String preAlarmNotificationId =
+    final String preAlarmNotificationIdString =
         payload['preAlarmNotificationId'] ?? '';
     if (action.channelKey == 'alarm_notifications_channel') {
-      await AwesomeNotifications().dismiss(int.parse(preAlarmNotificationId));
+      final int preAlarmNotificationId =
+          int.parse(preAlarmNotificationIdString);
+      await AwesomeNotifications().dismiss(preAlarmNotificationId);
+      //? await AwesomeNotifications().dismissNotificationsByChannelKey('pre_alarm_notifications_channel');
       final bool isRepeatingAlarm =
           AlarmsRepository().checkIsRepeatingAlarm(alarmId) ?? false;
       if (!isRepeatingAlarm) {

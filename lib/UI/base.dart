@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../bloc/edit_alarms/edit_alarms_cubit.dart';
+import '../bloc/alarm_view/alarm_view_cubit.dart';
 import '../constants/ui_constants.dart';
 import '../core/utils.dart';
 import '../models/alarm.dart';
 import '../repositories/alarms_repository.dart';
 import '../theme/pallete.dart';
 import 'common/exit_dialog.dart';
-import 'pages/alarm/view/alarm_view.dart';
 import 'pages/alarm/widgets/alarm_appbar.dart';
 
 class PageCubit extends Cubit<int> {
@@ -19,28 +18,31 @@ class PageCubit extends Cubit<int> {
 
 class Base extends StatelessWidget {
   final AlarmsRepository _alarmsRepository;
-  const Base({super.key, required AlarmsRepository alarmsRepository})
-      : _alarmsRepository = alarmsRepository;
+  const Base({
+    super.key,
+    required AlarmsRepository alarmsRepository,
+  }) : _alarmsRepository = alarmsRepository;
 
   static void _goBackToDefaultMode(BuildContext context) {
-    context.read<EditAlarmsCubit>().toggleEditMode();
-    context.read<EditAlarmsCubit>().clearAlarms();
+    context.read<AlarmViewCubit>().toggleEditMode();
+    context.read<AlarmViewCubit>().clearAlarms();
+    context.read<AlarmViewCubit>().setFilterType(FilterType.none);
   }
 
   static void _onPageChange(int page, BuildContext context) =>
       context.read<PageCubit>().changePage(page);
 
   void _onTapInEditMode(
-      BuildContext context, int index, EditAlarmsState editAlarmsState) {
+      BuildContext context, int index, AlarmViewCubitState alarmViewState) {
     if (index == 0) {
       _goBackToDefaultMode(context);
     } else if (index == 1) {
-      if (editAlarmsState.alarms.isNotEmpty) {
-        _onSwitchAlarm(editAlarmsState.alarms, context);
+      if (alarmViewState.currentlyChangingAlarms.isNotEmpty) {
+        _onSwitchAlarm(alarmViewState.currentlyChangingAlarms, context);
       }
     } else if (index == 2) {
-      if (editAlarmsState.alarms.isNotEmpty) {
-        _onDelete(editAlarmsState.alarms, context);
+      if (alarmViewState.currentlyChangingAlarms.isNotEmpty) {
+        _onDelete(alarmViewState.currentlyChangingAlarms, context);
       }
     }
   }
@@ -52,13 +54,13 @@ class Base extends StatelessWidget {
         ids.add(alarm.id);
       }
       _alarmsRepository.deleteAlarms(ids);
-      context.read<EditAlarmsCubit>().clearAlarms();
+      context.read<AlarmViewCubit>().clearAlarms();
       _goBackToDefaultMode(context);
     } else if (alarms.isEmpty) {
       AppUtils.showSnackBar(context, 'No alarms selected');
     } else {
       _alarmsRepository.deleteAlarm(alarms.first.id);
-      context.read<EditAlarmsCubit>().clearAlarms();
+      context.read<AlarmViewCubit>().clearAlarms();
       _goBackToDefaultMode(context);
     }
   }
@@ -66,28 +68,28 @@ class Base extends StatelessWidget {
   void _onSwitchAlarm(List<AlarmModel> alarms, BuildContext context) {
     if (alarms.length > 1) {
       _alarmsRepository.launchAlarms(alarms);
-      context.read<EditAlarmsCubit>().clearAlarms();
+      context.read<AlarmViewCubit>().clearAlarms();
       _goBackToDefaultMode(context);
     } else if (alarms.isEmpty) {
       AppUtils.showSnackBar(context, 'No alarms selected');
     } else {
       _alarmsRepository.launchAlarm(alarms.first.id);
-      context.read<EditAlarmsCubit>().clearAlarms();
+      context.read<AlarmViewCubit>().clearAlarms();
       _goBackToDefaultMode(context);
     }
   }
 
   static void _scrollToTop(BuildContext context) =>
-      context.read<AlarmViewCubit>().state.animateTo(
-            0,
-            duration: const Duration(milliseconds: 250),
-            curve: Curves.linear,
-          );
+      UIConstants.nestedScrollViewKey.currentState?.outerController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.linear,
+      );
 
   static Future<bool> _onWillPop(BuildContext context) async {
-    final bool isEditMode = context.read<EditAlarmsCubit>().state.isEditMode;
+    final bool isEditMode = context.read<AlarmViewCubit>().state.isEditMode;
     if (isEditMode) {
-      context.read<EditAlarmsCubit>().toggleEditMode();
+      context.read<AlarmViewCubit>().toggleEditMode();
       return false;
     } else {
       return await showDialog(
@@ -101,8 +103,8 @@ class Base extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final int currentPage = context.watch<PageCubit>().state;
-    final EditAlarmsState editAlarmsState =
-        context.watch<EditAlarmsCubit>().state;
+    final AlarmViewCubitState alarmViewState =
+        context.watch<AlarmViewCubit>().state;
     final bool isCollapsed = context.watch<AlarmAppBarCubit>().state;
     return WillPopScope(
       onWillPop: () => _onWillPop(context),
@@ -123,7 +125,7 @@ class Base extends StatelessWidget {
               )
             : null,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        bottomNavigationBar: editAlarmsState.isEditMode
+        bottomNavigationBar: alarmViewState.isEditMode
             ? Container(
                 decoration: const BoxDecoration(
                   borderRadius: BorderRadius.only(
@@ -140,7 +142,7 @@ class Base extends StatelessWidget {
                     showUnselectedLabels: true,
                     enableFeedback: false,
                     onTap: (index) =>
-                        _onTapInEditMode(context, index, editAlarmsState),
+                        _onTapInEditMode(context, index, alarmViewState),
                     items: [
                       const BottomNavigationBarItem(
                         icon: Icon(
@@ -153,7 +155,7 @@ class Base extends StatelessWidget {
                         icon: Icon(
                           Icons.alarm_rounded,
                           size: 24,
-                          color: editAlarmsState.alarms.isEmpty
+                          color: alarmViewState.currentlyChangingAlarms.isEmpty
                               ? Colors.grey
                               : null,
                         ),
@@ -163,7 +165,7 @@ class Base extends StatelessWidget {
                         icon: Icon(
                           Icons.delete_outline_rounded,
                           size: 24,
-                          color: editAlarmsState.alarms.isEmpty
+                          color: alarmViewState.currentlyChangingAlarms.isEmpty
                               ? Colors.grey
                               : null,
                         ),
