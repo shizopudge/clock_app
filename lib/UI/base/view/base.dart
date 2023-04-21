@@ -58,7 +58,7 @@ class Base extends StatelessWidget {
                 icon: const Icon(
                   Icons.arrow_circle_up_rounded,
                   size: 32,
-                  color: PalleteLight.actionColor,
+                  color: Pallete.actionColor,
                 ),
               )
             : null,

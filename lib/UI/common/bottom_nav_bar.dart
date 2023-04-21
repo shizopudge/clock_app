@@ -52,8 +52,8 @@ class BottomNavBar extends StatelessWidget {
                 enableFeedback: false,
                 unselectedLabelStyle: AppFonts.labelStyle,
                 selectedLabelStyle: AppFonts.labelStyle,
-                selectedItemColor: PalleteDark.actionColor,
-                unselectedItemColor: PalleteDark.actionColor,
+                selectedItemColor: Pallete.actionColor,
+                unselectedItemColor: Pallete.actionColor,
                 onTap: (index) => _baseController.onTapInEditAlarmsMode(
                     context, index, alarmViewState),
                 items: const [
@@ -111,8 +111,8 @@ class BottomNavBar extends StatelessWidget {
                 enableFeedback: false,
                 unselectedLabelStyle: AppFonts.labelStyle,
                 selectedLabelStyle: AppFonts.labelStyle,
-                selectedItemColor: PalleteDark.actionColor,
-                unselectedItemColor: PalleteDark.actionColor,
+                selectedItemColor: Pallete.actionColor,
+                unselectedItemColor: Pallete.actionColor,
                 onTap: (index) => _baseController.onTapInEditHabitsMode(
                     context, index, habitViewState),
                 items: const [
@@ -186,8 +186,8 @@ class BottomNavBar extends StatelessWidget {
   //       enableFeedback: false,
   //       unselectedLabelStyle: AppFonts.labelStyle,
   //       selectedLabelStyle: AppFonts.labelStyle,
-  //       selectedItemColor: PalleteDark.actionColor,
-  //       unselectedItemColor: PalleteDark.actionColor,
+  //       selectedItemColor: Pallete.actionColor,
+  //       unselectedItemColor: Pallete.actionColor,
   //       onTap: (index) => _baseController.onTapInEditAlarmsMode(
   //           context, index, alarmViewState),
   //       items: const [
@@ -221,8 +221,8 @@ class BottomNavBar extends StatelessWidget {
   //       enableFeedback: false,
   //       unselectedLabelStyle: AppFonts.labelStyle,
   //       selectedLabelStyle: AppFonts.labelStyle,
-  //       selectedItemColor: PalleteDark.actionColor,
-  //       unselectedItemColor: PalleteDark.actionColor,
+  //       selectedItemColor: Pallete.actionColor,
+  //       unselectedItemColor: Pallete.actionColor,
   //       onTap: (index) => _baseController.onTapInEditHabitsMode(
   //           context, index, habitViewState),
   //       items: const [

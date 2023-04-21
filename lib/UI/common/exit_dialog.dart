@@ -17,7 +17,7 @@ class ExitDialog extends StatelessWidget {
       title: Text(
         'Are you sure?',
         style: AppFonts.headerStyle.copyWith(
-          color: PalleteLight.actionColor,
+          color: Pallete.actionColor,
         ),
       ),
       content: Text(
@@ -34,14 +34,14 @@ class ExitDialog extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: PalleteLight.actionColor,
+                  color: Pallete.actionColor,
                 ),
               ),
               padding: const EdgeInsets.all(8),
               child: Text(
                 'No',
                 style: AppFonts.labelStyle.copyWith(
-                  color: PalleteLight.actionColor,
+                  color: Pallete.actionColor,
                 ),
               ),
             ),

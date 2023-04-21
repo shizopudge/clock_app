@@ -46,7 +46,11 @@ class HabitCard extends StatelessWidget {
           ),
           margin: const EdgeInsets.symmetric(vertical: 10),
           child: InkWell(
-            onLongPress: () => _onLongPress(context),
+            onLongPress: () {
+              if (!habitViewState.isEditMode) {
+                _onLongPress(context);
+              }
+            },
             onTap: () {
               if (habitViewState.isEditMode) {
                 _habitController.onAddOneHabit(context, habit);
@@ -120,7 +124,7 @@ class HabitCard extends StatelessWidget {
                               value: habit.isEnabled,
                               onChanged: (isLaunched) =>
                                   _habitController.enableHabit(habit.id),
-                              activeColor: PalleteLight.actionColor,
+                              activeColor: Pallete.actionColor,
                             ),
                           ],
                         ),
@@ -183,7 +187,7 @@ class HabitCard extends StatelessWidget {
                               value: habit.isEnabled,
                               onChanged: (isLaunched) =>
                                   _habitController.enableHabit(habit.id),
-                              activeColor: PalleteLight.actionColor,
+                              activeColor: Pallete.actionColor,
                             ),
                           ],
                         ),

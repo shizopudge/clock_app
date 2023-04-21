@@ -111,12 +111,12 @@ class UIUtils {
                 children: [
                   const CircleAvatar(
                     radius: 1.2,
-                    backgroundColor: PalleteLight.actionColor,
+                    backgroundColor: Pallete.actionColor,
                   ),
                   Text(
                     day,
                     style: AppFonts.labelStyle.copyWith(
-                      color: PalleteLight.actionColor,
+                      color: Pallete.actionColor,
                       fontSize: 11,
                     ),
                   ),
@@ -144,7 +144,7 @@ class UIUtils {
           day: 'Mon',
           dayLetter: 'M',
           style: AppFonts.labelStyle.copyWith(
-            color: PalleteLight.actionColor,
+            color: Pallete.actionColor,
             fontWeight: FontWeight.bold,
           ),
         );
@@ -153,7 +153,7 @@ class UIUtils {
           day: 'Tue',
           dayLetter: 'T',
           style: AppFonts.labelStyle.copyWith(
-            color: PalleteLight.actionColor,
+            color: Pallete.actionColor,
             fontWeight: FontWeight.bold,
           ),
         );
@@ -162,7 +162,7 @@ class UIUtils {
           day: 'Wed',
           dayLetter: 'W',
           style: AppFonts.labelStyle.copyWith(
-            color: PalleteLight.actionColor,
+            color: Pallete.actionColor,
             fontWeight: FontWeight.bold,
           ),
         );
@@ -171,7 +171,7 @@ class UIUtils {
           day: 'Thu',
           dayLetter: 'T',
           style: AppFonts.labelStyle.copyWith(
-            color: PalleteLight.actionColor,
+            color: Pallete.actionColor,
             fontWeight: FontWeight.bold,
           ),
         );
@@ -180,7 +180,7 @@ class UIUtils {
           day: 'Fri',
           dayLetter: 'F',
           style: AppFonts.labelStyle.copyWith(
-            color: PalleteLight.actionColor,
+            color: Pallete.actionColor,
             fontWeight: FontWeight.bold,
           ),
         );

@@ -22,10 +22,10 @@ class AppTheme {
   static final ThemeData lightTheme = ThemeData.dark().copyWith(
     scaffoldBackgroundColor: Colors.transparent,
     colorScheme: const ColorScheme.dark().copyWith(
-      secondary: PalleteLight.actionColor,
+      secondary: Pallete.actionColor,
     ),
     scrollbarTheme: const ScrollbarThemeData(
-      thumbColor: MaterialStatePropertyAll(PalleteLight.actionColor),
+      thumbColor: MaterialStatePropertyAll(Pallete.actionColor),
     ),
     listTileTheme: const ListTileThemeData(
       tileColor: PalleteLight.backgroundColor,
@@ -34,10 +34,10 @@ class AppTheme {
       color: PalleteLight.backgroundColor,
     ),
     iconTheme: const IconThemeData(
-      color: PalleteLight.actionColor,
+      color: Pallete.actionColor,
     ),
     snackBarTheme: SnackBarThemeData(
-      backgroundColor: PalleteLight.actionColor,
+      backgroundColor: Pallete.actionColor,
       contentTextStyle: AppFonts.labelStyle,
       elevation: 0,
       shape: RoundedRectangleBorder(
@@ -68,10 +68,10 @@ class AppTheme {
   static final ThemeData darkTheme = ThemeData.dark().copyWith(
     scaffoldBackgroundColor: PalleteDark.backgroundColor,
     colorScheme: const ColorScheme.dark().copyWith(
-      secondary: PalleteLight.actionColor,
+      secondary: Pallete.actionColor,
     ),
     scrollbarTheme: const ScrollbarThemeData(
-      thumbColor: MaterialStatePropertyAll(PalleteLight.actionColor),
+      thumbColor: MaterialStatePropertyAll(Pallete.actionColor),
     ),
     listTileTheme: const ListTileThemeData(
       tileColor: PalleteDark.cardColor,
@@ -81,7 +81,7 @@ class AppTheme {
     ),
     cardColor: PalleteDark.cardColor,
     iconTheme: const IconThemeData(
-      color: PalleteLight.actionColor,
+      color: Pallete.actionColor,
     ),
     snackBarTheme: SnackBarThemeData(
       backgroundColor: PalleteDark.fullBlack,

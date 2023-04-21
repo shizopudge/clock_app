@@ -20,6 +20,6 @@ class AppFonts {
   static final TextStyle timeStyle = GoogleFonts.lato(
     fontSize: 55,
     fontWeight: FontWeight.bold,
-    color: PalleteLight.actionColor,
+    color: Pallete.actionColor,
   );
 }

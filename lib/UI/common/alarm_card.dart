@@ -51,7 +51,11 @@ class AlarmCard extends StatelessWidget {
           ),
           margin: const EdgeInsets.symmetric(vertical: 10),
           child: InkWell(
-            onLongPress: () => _onLongPress(context),
+            onLongPress: () {
+              if (!alarmViewState.isEditMode) {
+                _onLongPress(context);
+              }
+            },
             onTap: () {
               if (alarmViewState.isEditMode) {
                 _alarmController.onAddOneAlarm(context, alarm);
@@ -110,7 +114,7 @@ class AlarmCard extends StatelessWidget {
                                   _alarmController.enableAlarm(alarm.id),
                               inactiveTrackColor: Colors.grey.shade700,
                               inactiveThumbColor: Colors.grey,
-                              activeColor: PalleteLight.actionColor,
+                              activeColor: Pallete.actionColor,
                             ),
                           ],
                         ),
@@ -157,7 +161,7 @@ class AlarmCard extends StatelessWidget {
                                   _alarmController.enableAlarm(alarm.id),
                               inactiveTrackColor: Colors.grey.shade700,
                               inactiveThumbColor: Colors.grey,
-                              activeColor: PalleteLight.actionColor,
+                              activeColor: Pallete.actionColor,
                             ),
                             Row(
                               children: [

@@ -22,7 +22,7 @@ class ActionButton extends StatelessWidget {
             12,
           ),
         ),
-        backgroundColor: PalleteLight.actionColor,
+        backgroundColor: Pallete.actionColor,
         padding: const EdgeInsets.all(8),
       ),
       child: Padding(

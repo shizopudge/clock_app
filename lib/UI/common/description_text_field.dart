@@ -42,12 +42,12 @@ class DescriptionTextField extends StatelessWidget {
           counterText: '',
           enabledBorder: const UnderlineInputBorder(
             borderSide: BorderSide(
-              color: PalleteLight.actionColor,
+              color: Pallete.actionColor,
             ),
           ),
           focusedBorder: const UnderlineInputBorder(
             borderSide: BorderSide(
-              color: PalleteLight.actionColor,
+              color: Pallete.actionColor,
             ),
           ),
         ),

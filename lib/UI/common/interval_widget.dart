@@ -33,9 +33,9 @@ class IntervalWidget extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(21),
         border: Border.all(
-          color: PalleteDark.actionColor,
+          color: Pallete.actionColor,
         ),
-        color: currentInterval == interval ? PalleteDark.actionColor : null,
+        color: currentInterval == interval ? Pallete.actionColor : null,
       ),
       margin: const EdgeInsets.all(12.0),
       child: InkWell(

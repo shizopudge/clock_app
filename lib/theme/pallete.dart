@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+class Pallete {
+  static const Color actionColor = Color.fromRGBO(67, 180, 241, 1);
+}
+
 class PalleteLight {
   static const LinearGradient backgroundGradient = LinearGradient(
       begin: Alignment.topLeft,
@@ -19,14 +23,10 @@ class PalleteLight {
         Color.fromRGBO(137, 37, 62, 1.0),
       ]);
 
-  static const Color actionColor = Color.fromRGBO(67, 180, 241, 1);
-
   static const Color backgroundColor = Color.fromARGB(136, 64, 133, 179);
 }
 
 class PalleteDark {
-  static const Color actionColor = Color.fromRGBO(67, 180, 241, 1);
-
   static final Color backgroundColor = Colors.grey.shade900;
 
   static const Color cardColor = Colors.black38;
