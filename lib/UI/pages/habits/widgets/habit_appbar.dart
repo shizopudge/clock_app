@@ -6,6 +6,7 @@ import '../../../../models/habit/habit.dart';
 import '../../../../theme/fonts.dart';
 import '../../../common/menu_popup.dart';
 import '../../../common/filter_popup.dart';
+import '../controller/habit_controller.dart';
 
 class HabitAppBarCubit extends Cubit<bool> {
   HabitAppBarCubit() : super(false);
@@ -19,12 +20,14 @@ class HabitAppBar extends StatelessWidget {
   final double height;
   final List<Habit> habits;
   final List<Habit> shownHabits;
+  final HabitController _habitController;
   const HabitAppBar({
     super.key,
     required this.height,
     required this.habits,
     required this.shownHabits,
-  });
+    required HabitController habitController,
+  }) : _habitController = habitController;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +44,7 @@ class HabitAppBar extends StatelessWidget {
           floating: true,
           pinned: true,
           backgroundColor: Colors.transparent,
-          expandedHeight: height / 3,
+          expandedHeight: habitViewState.isEditMode ? 150 : 0,
           bottom: PreferredSize(
             preferredSize: const Size(
               double.infinity,
@@ -60,13 +63,19 @@ class HabitAppBar extends StatelessWidget {
                             Checkbox(
                                 value: habitViewState
                                         .currentlyChangingHabits.length ==
-                                    habits.length,
+                                    shownHabits.length,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
                                     8,
                                   ),
                                 ),
-                                onChanged: (value) {}),
+                                onChanged: (value) =>
+                                    _habitController.onChanged(
+                                      context,
+                                      editHabitsLength: habitViewState
+                                          .currentlyChangingHabits.length,
+                                      shownHabits: shownHabits,
+                                    )),
                             Text(
                               'All',
                               style: AppFonts.labelStyle,
@@ -87,9 +96,12 @@ class HabitAppBar extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            const FilterPopup(),
+                            const FilterPopup(
+                              isAlarm: false,
+                            ),
                             MenuPopup(
                               isListEmpty: habits.isEmpty,
+                              isAlarm: false,
                             ),
                           ],
                         ),
@@ -111,15 +123,20 @@ class HabitAppBar extends StatelessWidget {
                         Row(
                           children: [
                             IconButton(
-                              onPressed: () {},
+                              onPressed: () => _habitController
+                                  .goToAddHabit(context, habits: habits),
                               icon: const Icon(
                                 Icons.add_alert_rounded,
                                 size: 32,
                               ),
                             ),
-                            if (habits.isNotEmpty) const FilterPopup(),
+                            if (habits.isNotEmpty)
+                              const FilterPopup(
+                                isAlarm: false,
+                              ),
                             MenuPopup(
                               isListEmpty: habits.isEmpty,
+                              isAlarm: false,
                             ),
                           ],
                         ),

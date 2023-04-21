@@ -6,6 +6,7 @@ import '../../../../theme/fonts.dart';
 import '../../../../theme/pallete.dart';
 import '../../../../theme/theme.dart';
 import '../controller/settings_controller.dart';
+import '../widgets/settings_list_tile.dart';
 
 class SettingsView extends StatelessWidget {
   final SettingsController _settingsController;
@@ -36,7 +37,7 @@ class SettingsView extends StatelessWidget {
           children: [
             SettingsListTile(
               onTap: () async {
-                showMenu(
+                await showMenu(
                   context: context,
                   position:
                       const RelativeRect.fromLTRB(double.infinity, 120, 8, 0),
@@ -46,14 +47,16 @@ class SettingsView extends StatelessWidget {
                   ),
                   items: [
                     PopupMenuItem(
-                      onTap: () => _settingsController.toggleTheme(),
+                      onTap: () => _settingsController
+                          .switchTheme(AppTheme.darkThemeName),
                       child: Text(
                         'Dark',
                         style: AppFonts.labelStyle,
                       ),
                     ),
                     PopupMenuItem(
-                      onTap: () => _settingsController.toggleTheme(),
+                      onTap: () => _settingsController
+                          .switchTheme(AppTheme.lightThemeName),
                       child: Text(
                         'Light',
                         style: AppFonts.labelStyle,
@@ -70,49 +73,6 @@ class SettingsView extends StatelessWidget {
                   : Icons.light_mode_rounded,
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class SettingsListTile extends StatelessWidget {
-  final VoidCallback onTap;
-  final String title;
-  final String currentSetting;
-  final IconData icon;
-  const SettingsListTile({
-    super.key,
-    required this.onTap,
-    required this.title,
-    required this.currentSetting,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-      child: ListTile(
-        onTap: onTap,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(21),
-        ),
-        leading: Icon(
-          icon,
-          size: 32,
-        ),
-        title: Text(
-          title,
-          style: AppFonts.titleStyle,
-        ),
-        subtitle: Text(
-          currentSetting,
-          style: AppFonts.titleStyle,
-        ),
-        trailing: const Icon(
-          Icons.arrow_forward_ios_rounded,
-          size: 21,
         ),
       ),
     );

@@ -1,7 +1,11 @@
+import 'package:alarm_app/UI/common/habit_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-import '../../../../constants/ui_constants.dart';
+import '../../../../bloc/habit_view/habit_view_cubit.dart';
+import '../../../../core/ui_utils.dart';
+import '../../../../core/enums.dart';
 import '../../../../models/habit/habit.dart';
 import '../../../../storage/database.dart';
 import '../../../../theme/fonts.dart';
@@ -30,28 +34,40 @@ class _HabitViewState extends State<HabitView> {
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
+    final SortType sort = context.watch<HabitViewCubit>().state.sort;
+    final FilterType filter = context.watch<HabitViewCubit>().state.filter;
     return ValueListenableBuilder(
       valueListenable: habitsBox.listenable(),
-      builder: (context, box, widget) {
-        List<Habit> habits = box.values.toList();
+      builder: (context, box, _) {
+        List<Habit> habits = widget._habitController
+            .sortAndFilterHabits(habitsBox: box, sort: sort, filter: filter);
         return NestedScrollView(
-          key: UIConstants.habitsNestedScrollViewKey,
+          key: UIUtils.habitsNestedScrollViewKey,
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
-            HabitAppBar(height: height, habits: habits, shownHabits: habits)
+            HabitAppBar(
+              height: height,
+              habits: habitsBox.values.toList(),
+              shownHabits: habits,
+              habitController: widget._habitController,
+            ),
           ],
           controller: _scrollController,
           body: habits.isEmpty
               ? Center(
                   child: Text(
-                    'No habits',
+                    filter == FilterType.onlyEnabled
+                        ? 'No enabled habits'
+                        : filter == FilterType.onlyDisabled
+                            ? 'No disabled habits'
+                            : 'No habits',
                     style: AppFonts.headerStyle,
                   ),
                 )
               : Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: Scrollbar(
-                    controller: UIConstants.habitsNestedScrollViewKey
-                        .currentState?.innerController,
+                    controller: UIUtils.habitsNestedScrollViewKey.currentState
+                        ?.innerController,
                     thickness: 2.5,
                     thumbVisibility: false,
                     interactive: true,
@@ -63,16 +79,15 @@ class _HabitViewState extends State<HabitView> {
                         if (index == habits.length - 1) {
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 50),
-                            child: Text(
-                              habit.toString(),
+                            child: HabitCard(
+                              habit: habit,
+                              habitController: widget._habitController,
                             ),
                           );
                         }
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 50),
-                          child: Text(
-                            habit.toString(),
-                          ),
+                        return HabitCard(
+                          habit: habit,
+                          habitController: widget._habitController,
                         );
                       },
                     ),

@@ -54,24 +54,14 @@ class AppTheme {
       ),
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
-      backgroundColor: PalleteLight.backgroundColor,
+      backgroundColor: Colors.transparent,
       type: BottomNavigationBarType.fixed,
       showSelectedLabels: true,
       showUnselectedLabels: false,
       selectedLabelStyle: AppFonts.labelStyle.copyWith(
         letterSpacing: 1.2,
       ),
-      unselectedItemColor: Colors.grey,
-      selectedItemColor: PalleteLight.actionColor,
       elevation: 0,
-      unselectedIconTheme: const IconThemeData(
-        color: Colors.white,
-        opacity: .85,
-      ),
-      selectedIconTheme: const IconThemeData(
-        color: PalleteLight.actionColor,
-        opacity: 1,
-      ),
     ),
   );
 
@@ -118,31 +108,15 @@ class AppTheme {
       selectedLabelStyle: AppFonts.labelStyle.copyWith(
         letterSpacing: 1.2,
       ),
-      unselectedItemColor: Colors.grey,
-      selectedItemColor: PalleteLight.actionColor,
       elevation: 0,
-      unselectedIconTheme: const IconThemeData(
-        color: Colors.white,
-        opacity: .85,
-      ),
-      selectedIconTheme: const IconThemeData(
-        color: PalleteLight.actionColor,
-        opacity: 1,
-      ),
     ),
   );
 
-  static Future<void> toggleTheme() async {
+  static Future<void> switchTheme(String theme) async {
     final bool isBoxOpened = Hive.isBoxOpen(DatabaseHelper.settingsBox);
     if (isBoxOpened) {
       final Box settingsBox = Hive.box(DatabaseHelper.settingsBox);
-      final String currentTheme =
-          settingsBox.get('theme', defaultValue: defaultTheme);
-      if (currentTheme == darkThemeName) {
-        await settingsBox.put('theme', lightThemeName);
-      } else {
-        await settingsBox.put('theme', darkThemeName);
-      }
+      await settingsBox.put('theme', theme);
     }
   }
 

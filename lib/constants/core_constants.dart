@@ -1,3 +1,6 @@
+import 'package:alarm_app/UI/pages/add_edit_habit/controller/add_edit_habit_controller.dart';
+
+import '../UI/pages/add_edit_alarm/controller/add_edit_alarm_controller.dart';
 import '../UI/pages/alarm/alarm_controller/alarm_controller.dart';
 import '../UI/pages/habits/controller/habit_controller.dart';
 import '../UI/pages/settings/controller/settings_controller.dart';
@@ -14,6 +17,13 @@ class CoreConstants {
   static final alarmController =
       AlarmController(alarmsRepository: alarmRepository);
 
+  static final addEditAlarmController = AddEditAlarmController(
+    alarmsRepository: alarmRepository,
+  );
+
   static final habitController =
       HabitController(habitsRepository: habitRepository);
+
+  static final addEditHabitController =
+      AddEditHabitController(habitsRepository: habitRepository);
 }

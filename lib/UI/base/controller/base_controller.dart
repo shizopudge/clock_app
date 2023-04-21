@@ -2,26 +2,36 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../bloc/alarm_view/alarm_view_cubit.dart';
-import '../../../constants/ui_constants.dart';
+import '../../../bloc/habit_view/habit_view_cubit.dart';
+import '../../../core/ui_utils.dart';
 import '../../../core/enums.dart';
 import '../../../core/utils.dart';
 import '../../../models/alarm/alarm.dart';
+import '../../../models/habit/habit.dart';
 import '../../../repositories/alarms_repository.dart';
+import '../../../repositories/habits_repository.dart';
 import '../../common/exit_dialog.dart';
 import '../view/base.dart';
 
 abstract class IBaseController {
-  void goBackToDefaultMode(BuildContext context);
+  void goBackToDefaultMode(BuildContext context, bool isAlarm);
 
   void onPageChange(BuildContext context,
       {required int page, required int currentPage});
 
-  void onTapInEditMode(
+  void onTapInEditAlarmsMode(
       BuildContext context, int index, AlarmViewCubitState alarmViewState);
 
-  void onDelete(List<Alarm> alarms, BuildContext context);
+  void onTapInEditHabitsMode(
+      BuildContext context, int index, HabitViewCubitState habitViewState);
 
-  void onSwitch(List<Alarm> alarms, BuildContext context);
+  void onDeleteAlarms(List<Alarm> alarms, BuildContext context);
+
+  void onSwitchAlarms(List<Alarm> alarms, BuildContext context);
+
+  void onDeleteHabits(List<Habit> habits, BuildContext context);
+
+  void onSwitchHabits(List<Habit> habits, BuildContext context);
 
   void scrollToTop(BuildContext context, int currentPage);
 
@@ -30,15 +40,24 @@ abstract class IBaseController {
 
 class BaseController extends IBaseController {
   final AlarmsRepository _alarmsRepository;
-  BaseController({
-    required AlarmsRepository alarmsRepository,
-  }) : _alarmsRepository = alarmsRepository;
+  final HabitsRepository _habitsRepository;
+  BaseController(
+      {required AlarmsRepository alarmsRepository,
+      required HabitsRepository habitsRepository})
+      : _alarmsRepository = alarmsRepository,
+        _habitsRepository = habitsRepository;
 
   @override
-  void goBackToDefaultMode(BuildContext context) {
-    context.read<AlarmViewCubit>().toggleEditMode();
-    context.read<AlarmViewCubit>().clearAlarms();
-    context.read<AlarmViewCubit>().setFilterType(FilterType.none);
+  void goBackToDefaultMode(BuildContext context, bool isAlarm) {
+    if (isAlarm) {
+      context.read<AlarmViewCubit>().toggleEditMode();
+      context.read<AlarmViewCubit>().clearAlarms();
+      context.read<AlarmViewCubit>().setFilterType(FilterType.none);
+    } else {
+      context.read<HabitViewCubit>().toggleEditMode();
+      context.read<HabitViewCubit>().clearHabits();
+      context.read<HabitViewCubit>().setFilterType(FilterType.none);
+    }
   }
 
   @override
@@ -46,32 +65,46 @@ class BaseController extends IBaseController {
       {required int page, required int currentPage}) {
     context.read<PageCubit>().changePage(page);
     if (currentPage == 0) {
-      UIConstants.alarmsNestedScrollViewKey.currentState?.outerController
-          .jumpTo(0);
+      UIUtils.alarmsNestedScrollViewKey.currentState?.outerController.jumpTo(0);
     } else if (currentPage == 1) {
-      UIConstants.habitsNestedScrollViewKey.currentState?.outerController
-          .jumpTo(0);
+      UIUtils.habitsNestedScrollViewKey.currentState?.outerController.jumpTo(0);
     }
   }
 
   @override
-  void onTapInEditMode(
+  void onTapInEditAlarmsMode(
       BuildContext context, int index, AlarmViewCubitState alarmViewState) {
     if (index == 0) {
-      goBackToDefaultMode(context);
+      goBackToDefaultMode(context, true);
     } else if (index == 1) {
       if (alarmViewState.currentlyChangingAlarms.isNotEmpty) {
-        onSwitch(alarmViewState.currentlyChangingAlarms, context);
+        onSwitchAlarms(alarmViewState.currentlyChangingAlarms, context);
       }
     } else if (index == 2) {
       if (alarmViewState.currentlyChangingAlarms.isNotEmpty) {
-        onDelete(alarmViewState.currentlyChangingAlarms, context);
+        onDeleteAlarms(alarmViewState.currentlyChangingAlarms, context);
       }
     }
   }
 
   @override
-  void onDelete(List<Alarm> alarms, BuildContext context) {
+  void onTapInEditHabitsMode(
+      BuildContext context, int index, HabitViewCubitState habitViewState) {
+    if (index == 0) {
+      goBackToDefaultMode(context, false);
+    } else if (index == 1) {
+      if (habitViewState.currentlyChangingHabits.isNotEmpty) {
+        onSwitchHabits(habitViewState.currentlyChangingHabits, context);
+      }
+    } else if (index == 2) {
+      if (habitViewState.currentlyChangingHabits.isNotEmpty) {
+        onDeleteHabits(habitViewState.currentlyChangingHabits, context);
+      }
+    }
+  }
+
+  @override
+  void onDeleteAlarms(List<Alarm> alarms, BuildContext context) {
     if (alarms.length > 1) {
       List<String> ids = [];
       for (Alarm alarm in alarms) {
@@ -79,18 +112,18 @@ class BaseController extends IBaseController {
       }
       _alarmsRepository.deleteAlarms(ids);
       context.read<AlarmViewCubit>().clearAlarms();
-      goBackToDefaultMode(context);
+      goBackToDefaultMode(context, true);
     } else if (alarms.isEmpty) {
       AppUtils.showSnackBar(context, 'No alarms selected');
     } else {
       _alarmsRepository.deleteAlarm(alarms.first.id);
       context.read<AlarmViewCubit>().clearAlarms();
-      goBackToDefaultMode(context);
+      goBackToDefaultMode(context, true);
     }
   }
 
   @override
-  void onSwitch(List<Alarm> alarms, BuildContext context) {
+  void onSwitchAlarms(List<Alarm> alarms, BuildContext context) {
     if (alarms.length > 1) {
       List<String> ids = [];
       for (Alarm alarm in alarms) {
@@ -98,28 +131,64 @@ class BaseController extends IBaseController {
       }
       _alarmsRepository.enableAlarms(ids);
       context.read<AlarmViewCubit>().clearAlarms();
-      goBackToDefaultMode(context);
+      goBackToDefaultMode(context, true);
     } else if (alarms.isEmpty) {
       AppUtils.showSnackBar(context, 'No alarms selected');
     } else {
       _alarmsRepository.enableAlarm(alarms.first.id);
       context.read<AlarmViewCubit>().clearAlarms();
-      goBackToDefaultMode(context);
+      goBackToDefaultMode(context, true);
+    }
+  }
+
+  @override
+  void onDeleteHabits(List<Habit> habits, BuildContext context) {
+    if (habits.length > 1) {
+      List<String> ids = [];
+      for (Habit habit in habits) {
+        ids.add(habit.id);
+      }
+      _habitsRepository.deleteHabits(ids);
+      context.read<AlarmViewCubit>().clearAlarms();
+      goBackToDefaultMode(context, false);
+    } else if (habits.isEmpty) {
+      AppUtils.showSnackBar(context, 'No alarms selected');
+    } else {
+      _habitsRepository.deleteHabit(habits.first.id);
+      context.read<AlarmViewCubit>().clearAlarms();
+      goBackToDefaultMode(context, false);
+    }
+  }
+
+  @override
+  void onSwitchHabits(List<Habit> habits, BuildContext context) {
+    if (habits.length > 1) {
+      List<String> ids = [];
+      for (Habit habit in habits) {
+        ids.add(habit.id);
+      }
+      _habitsRepository.enableHabits(ids);
+      context.read<HabitViewCubit>().clearHabits();
+      goBackToDefaultMode(context, false);
+    } else if (habits.isEmpty) {
+      AppUtils.showSnackBar(context, 'No alarms selected');
+    } else {
+      _habitsRepository.enableHabit(habits.first.id);
+      context.read<HabitViewCubit>().clearHabits();
+      goBackToDefaultMode(context, false);
     }
   }
 
   @override
   void scrollToTop(BuildContext context, int currentPage) {
     if (currentPage == 0) {
-      UIConstants.alarmsNestedScrollViewKey.currentState?.outerController
-          .animateTo(
+      UIUtils.alarmsNestedScrollViewKey.currentState?.outerController.animateTo(
         0,
         duration: const Duration(milliseconds: 250),
         curve: Curves.linear,
       );
     } else if (currentPage == 1) {
-      UIConstants.habitsNestedScrollViewKey.currentState?.outerController
-          .animateTo(
+      UIUtils.habitsNestedScrollViewKey.currentState?.outerController.animateTo(
         0,
         duration: const Duration(milliseconds: 250),
         curve: Curves.linear,

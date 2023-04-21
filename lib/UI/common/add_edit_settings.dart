@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-import '../../../../constants/ui_constants.dart';
-import '../../../../storage/database.dart';
-import '../../../../theme/pallete.dart';
-import '../../../../theme/theme.dart';
-import '../../../common/name_text_field.dart';
-import '../../../common/save_button.dart';
+import '../../core/ui_utils.dart';
+import '../../storage/database.dart';
+import '../../theme/pallete.dart';
+import '../../theme/theme.dart';
+import 'description_text_field.dart';
+import 'name_text_field.dart';
+import 'action_button.dart';
 
-class AlarmSettings extends StatelessWidget {
+class AddEditSettings extends StatelessWidget {
   final TextEditingController nameController;
+  final TextEditingController? descriptionController;
   final VoidCallback onSave;
-  const AlarmSettings({
+  final String nameHintText;
+  final bool isAlarm;
+  const AddEditSettings({
     super.key,
     required this.nameController,
     required this.onSave,
+    required this.isAlarm,
+    required this.nameHintText,
+    this.descriptionController,
   });
 
   @override
@@ -33,18 +40,25 @@ class AlarmSettings extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Padding(
-            padding:
-                const EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: UIConstants.daysOfTheWeek(),
+          if (isAlarm)
+            Padding(
+              padding: const EdgeInsets.only(
+                  left: 15, right: 15, top: 15, bottom: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: UIUtils.daysOfTheWeek(isAlarm: isAlarm),
+              ),
             ),
-          ),
           NameTextField(
             controller: nameController,
-            hint: 'Alarm name',
+            isAlarm: isAlarm,
+            hint: nameHintText,
           ),
+          if (!isAlarm && descriptionController != null)
+            DescriptionTextField(
+              controller: descriptionController!,
+              hint: 'Habit description',
+            ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
             child: Row(

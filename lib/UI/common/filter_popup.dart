@@ -2,20 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../bloc/alarm_view/alarm_view_cubit.dart';
+import '../../bloc/habit_view/habit_view_cubit.dart';
 import '../../core/enums.dart';
 import '../../theme/fonts.dart';
 
 class FilterPopup extends StatelessWidget {
-  const FilterPopup({super.key});
+  final bool isAlarm;
+  const FilterPopup({super.key, required this.isAlarm});
 
-  static void _onFilterTap(BuildContext context, FilterType filter) {
-    context.read<AlarmViewCubit>().clearAlarms();
-    context.read<AlarmViewCubit>().setFilterType(filter);
+  void _onFilterTap(BuildContext context, FilterType filter) {
+    if (isAlarm) {
+      context.read<AlarmViewCubit>().clearAlarms();
+      context.read<AlarmViewCubit>().setFilterType(filter);
+    } else {
+      context.read<HabitViewCubit>().clearHabits();
+      context.read<HabitViewCubit>().setFilterType(filter);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final FilterType filter = context.watch<AlarmViewCubit>().state.filter;
+    final FilterType filter = isAlarm
+        ? context.watch<AlarmViewCubit>().state.filter
+        : context.watch<HabitViewCubit>().state.filter;
     return PopupMenuButton(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(

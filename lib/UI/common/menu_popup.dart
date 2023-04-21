@@ -2,22 +2,35 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../bloc/alarm_view/alarm_view_cubit.dart';
+import '../../bloc/habit_view/habit_view_cubit.dart';
 import '../../core/enums.dart';
 import '../../core/router.dart';
 import '../../theme/fonts.dart';
 
 class MenuPopup extends StatelessWidget {
   final bool isListEmpty;
+  final bool isAlarm;
   const MenuPopup({
     super.key,
     required this.isListEmpty,
+    required this.isAlarm,
   });
 
-  static void _onEditTap(BuildContext context) =>
+  void _onEditTap(BuildContext context) {
+    if (isAlarm) {
       context.read<AlarmViewCubit>().toggleEditMode();
+    } else {
+      context.read<HabitViewCubit>().toggleEditMode();
+    }
+  }
 
-  static void _onSortTap(BuildContext context) =>
+  void _onSortTap(BuildContext context) {
+    if (isAlarm) {
       context.read<AlarmViewCubit>().setSortType();
+    } else {
+      context.read<HabitViewCubit>().setSortType();
+    }
+  }
 
   static void _onSettingsTap(BuildContext context) =>
       AppRouter.navigateWithSlideTransition(context, AppRouter.settingsPage);

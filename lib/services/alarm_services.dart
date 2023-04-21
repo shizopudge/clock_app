@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import '../core/utils.dart';
 
 import '../models/alarm/alarm.dart';
+import '../models/habit/habit.dart';
 import 'notification_services.dart';
 
 class AlarmServices {
@@ -139,6 +140,57 @@ class AlarmServices {
     debugPrint(a.length.toString());
   }
 
+  Future<void> cancelHabitSchedules(
+    List<String> habitsIds,
+  ) async {
+    for (String habitId in habitsIds) {
+      await cancelHabitSchedule(habitId);
+    }
+  }
+
+  Future<void> scheduleHabits(
+    List<Habit> habits,
+  ) async {
+    for (Habit habit in habits) {
+      if (habit.isEnabled) {
+        await scheduleHabit(habit);
+      } else {
+        await cancelHabitSchedule(habit.id);
+      }
+    }
+  }
+
+  Future<void> scheduleHabit(
+    Habit habit,
+  ) async {
+    final int habitId = Random().nextInt(959883616);
+    await NotificationServices.scheduleHabit(
+      id: habitId,
+      title: habit.name,
+      body: habit.description ?? '',
+      channelKey: 'habit_notifications_channel',
+      groupKey: 'habit_notifications_channel_group',
+      interval: habit.interval,
+      scheduled: true,
+      payload: {
+        'habitId': habit.id,
+      },
+    );
+  }
+
+  Future<void> cancelHabitSchedule(
+    String habitId,
+  ) async {
+    final scheduledNotifications =
+        await AwesomeNotifications().listScheduledNotifications();
+    for (NotificationModel notification in scheduledNotifications) {
+      final payload = notification.content?.payload ?? {};
+      if (payload['habitId'] == habitId) {
+        await AwesomeNotifications().cancel(notification.content?.id ?? 0);
+      }
+    }
+  }
+
   @pragma('vm:entry-point')
   Future<void> _scheduleOneAlarmNotification({
     required int alarmNotificationId,
@@ -156,7 +208,7 @@ class AlarmServices {
       actionButtons: [
         NotificationActionButton(
           key: 'Stop',
-          actionType: ActionType.SilentBackgroundAction,
+          actionType: ActionType.SilentAction,
           label: 'Stop',
         ),
       ],
@@ -168,7 +220,7 @@ class AlarmServices {
       criticalAlert: true,
       showWhen: false,
       scheduled: true,
-      actionType: ActionType.SilentBackgroundAction,
+      actionType: ActionType.SilentAction,
       notificationCategory: NotificationCategory.Alarm,
     );
   }
@@ -192,7 +244,7 @@ class AlarmServices {
       actionButtons: [
         NotificationActionButton(
           key: 'Switch off',
-          actionType: ActionType.SilentBackgroundAction,
+          actionType: ActionType.SilentAction,
           label:
               alarm.weekdays.isNotEmpty ? 'Turn off this time' : 'Switch off',
         ),
@@ -204,7 +256,7 @@ class AlarmServices {
       },
       showWhen: false,
       scheduled: true,
-      actionType: ActionType.SilentBackgroundAction,
+      actionType: ActionType.SilentAction,
       notificationCategory: NotificationCategory.Event,
     );
   }

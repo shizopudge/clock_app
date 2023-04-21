@@ -8,6 +8,7 @@ import 'UI/pages/welcome/controller/welcome_controller.dart';
 import 'UI/pages/welcome/view/welcome_view.dart';
 import 'core/providers.dart';
 import 'repositories/alarms_repository.dart';
+import 'repositories/habits_repository.dart';
 import 'services/app_launch_services.dart';
 import 'services/notification_services.dart';
 import 'services/workmanager.dart';
@@ -30,7 +31,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        ...AppProviders.cubits,
+        ...AppProviders.defaultProviders,
+        ...AppProviders.alarmProviders,
+        ...AppProviders.habitProviders,
       ],
       child: ValueListenableBuilder(
         valueListenable: Hive.box(DatabaseHelper.settingsBox).listenable(),
@@ -47,6 +50,7 @@ class MyApp extends StatelessWidget {
                 : Base(
                     baseController: BaseController(
                       alarmsRepository: AlarmsRepository(),
+                      habitsRepository: HabitsRepository(),
                     ),
                     theme: theme,
                   ),

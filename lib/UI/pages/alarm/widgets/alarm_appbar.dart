@@ -99,9 +99,12 @@ class AlarmAppBar extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            const FilterPopup(),
+                            const FilterPopup(
+                              isAlarm: true,
+                            ),
                             MenuPopup(
                               isListEmpty: alarms.isEmpty,
+                              isAlarm: true,
                             ),
                           ],
                         ),
@@ -132,9 +135,13 @@ class AlarmAppBar extends StatelessWidget {
                                 size: 32,
                               ),
                             ),
-                            if (alarms.isNotEmpty) const FilterPopup(),
+                            if (alarms.isNotEmpty)
+                              const FilterPopup(
+                                isAlarm: true,
+                              ),
                             MenuPopup(
                               isListEmpty: alarms.isEmpty,
+                              isAlarm: true,
                             ),
                           ],
                         ),

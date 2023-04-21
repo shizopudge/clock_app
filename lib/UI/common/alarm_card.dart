@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../bloc/alarm_view/alarm_view_cubit.dart';
-import '../../constants/ui_constants.dart';
+import '../../core/ui_utils.dart';
 import '../../core/utils.dart';
 import '../../models/alarm/alarm.dart';
 import '../../storage/database.dart';
@@ -22,9 +22,14 @@ class AlarmCard extends StatelessWidget {
     required AlarmController alarmController,
   }) : _alarmController = alarmController;
 
+  void _onLongPress(BuildContext context) {
+    context.read<AlarmViewCubit>().toggleEditMode();
+    _alarmController.onAddOneAlarm(context, alarm);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final List<Widget> days = UIConstants.launchedDays(
+    final List<Widget> days = UIUtils.launchedDays(
       alarm.weekdays,
     );
     final AlarmViewCubitState alarmViewState =
@@ -46,6 +51,7 @@ class AlarmCard extends StatelessWidget {
           ),
           margin: const EdgeInsets.symmetric(vertical: 10),
           child: InkWell(
+            onLongPress: () => _onLongPress(context),
             onTap: () {
               if (alarmViewState.isEditMode) {
                 _alarmController.onAddOneAlarm(context, alarm);
@@ -53,7 +59,7 @@ class AlarmCard extends StatelessWidget {
                 _alarmController.goToEditAlarm(context, alarm);
               }
             },
-            borderRadius: BorderRadius.circular(21),
+            borderRadius: BorderRadius.circular(12),
             child: Padding(
               padding: const EdgeInsets.all(15.0),
               child: alarmViewState.isEditMode
@@ -83,21 +89,25 @@ class AlarmCard extends StatelessWidget {
                                   Text(
                                     alarm.name ?? '',
                                     overflow: TextOverflow.ellipsis,
-                                    style: AppFonts.labelStyle
-                                        .copyWith(fontSize: 12),
+                                    style: AppFonts.labelStyle.copyWith(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                   Text(
                                     AppUtils.formatTime(
                                       alarm.time,
                                     ),
-                                    style: AppFonts.timeStyle,
+                                    style: AppFonts.timeStyle
+                                        .copyWith(fontSize: 48),
                                   ),
                                 ],
                               ),
                             ),
                             Switch.adaptive(
                               value: alarm.isEnabled,
-                              onChanged: (isLaunched) {},
+                              onChanged: (isLaunched) =>
+                                  _alarmController.enableAlarm(alarm.id),
                               inactiveTrackColor: Colors.grey.shade700,
                               inactiveThumbColor: Colors.grey,
                               activeColor: PalleteLight.actionColor,
@@ -123,14 +133,17 @@ class AlarmCard extends StatelessWidget {
                               Text(
                                 alarm.name ?? '',
                                 overflow: TextOverflow.ellipsis,
-                                style:
-                                    AppFonts.labelStyle.copyWith(fontSize: 12),
+                                style: AppFonts.labelStyle.copyWith(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                               Text(
                                 AppUtils.formatTime(
                                   alarm.time,
                                 ),
-                                style: AppFonts.timeStyle,
+                                style:
+                                    AppFonts.timeStyle.copyWith(fontSize: 48),
                               ),
                             ],
                           ),
@@ -141,9 +154,7 @@ class AlarmCard extends StatelessWidget {
                             Switch.adaptive(
                               value: alarm.isEnabled,
                               onChanged: (isLaunched) =>
-                                  !alarmViewState.isEditMode
-                                      ? _alarmController.enableAlarm(alarm.id)
-                                      : null,
+                                  _alarmController.enableAlarm(alarm.id),
                               inactiveTrackColor: Colors.grey.shade700,
                               inactiveThumbColor: Colors.grey,
                               activeColor: PalleteLight.actionColor,

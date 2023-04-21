@@ -44,5 +44,5 @@ class HabitViewCubit extends Cubit<HabitViewCubitState> {
   void setAllHabits(List<Habit> habits) =>
       emit(state.copyWith(currentlyChangingHabits: habits));
 
-  void clearAlarms() => emit(state.copyWith(currentlyChangingHabits: []));
+  void clearHabits() => emit(state.copyWith(currentlyChangingHabits: []));
 }

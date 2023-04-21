@@ -4,7 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../../bloc/alarm_view/alarm_view_cubit.dart';
 
-import '../../../../constants/ui_constants.dart';
+import '../../../../core/ui_utils.dart';
 import '../../../../core/enums.dart';
 import '../../../../models/alarm/alarm.dart';
 import '../../../../storage/database.dart';
@@ -49,7 +49,7 @@ class _AlarmViewState extends State<AlarmView> {
         List<Alarm> alarms = widget._alarmController.sortAndFilterAlarms(
             alarmsBox: alarmsBox, sort: sort, filter: filter);
         return NestedScrollView(
-          key: UIConstants.alarmsNestedScrollViewKey,
+          key: UIUtils.alarmsNestedScrollViewKey,
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             AlarmAppBar(
               height: height,
@@ -71,7 +71,7 @@ class _AlarmViewState extends State<AlarmView> {
                   ),
                 )
               : Scrollbar(
-                  controller: UIConstants
+                  controller: UIUtils
                       .alarmsNestedScrollViewKey.currentState?.innerController,
                   thickness: 2.5,
                   thumbVisibility: false,

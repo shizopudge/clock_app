@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../bloc/alarm_view/alarm_view_cubit.dart';
 import '../../../bloc/habit_view/habit_view_cubit.dart';
-import '../../../constants/ui_constants.dart';
+import '../../../core/ui_utils.dart';
 import '../../../theme/pallete.dart';
 import '../../../theme/theme.dart';
 import '../../common/bottom_nav_bar.dart';
@@ -46,7 +46,7 @@ class Base extends StatelessWidget {
           ),
           child: IndexedStack(
             index: currentPage,
-            children: UIConstants.pages,
+            children: UIUtils.pages,
           ),
         ),
         extendBodyBehindAppBar: true,

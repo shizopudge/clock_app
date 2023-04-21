@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../UI/pages/add_edit_alarm/controller/add_edit_alarm_controller.dart';
 import '../UI/pages/add_edit_alarm/view/add_edit_alarm_view.dart';
+import '../UI/pages/add_edit_habit/view/add_edit_habit_view.dart';
 import '../UI/pages/settings/view/settings_view.dart';
 import '../constants/core_constants.dart';
-import '../repositories/alarms_repository.dart';
 
 class AppRouter {
   static final AppRouter _appRouter = AppRouter._internal();
@@ -15,22 +14,28 @@ class AppRouter {
 
   AppRouter._internal();
 
+  static final Widget settingsPage = SettingsView(
+    settingsController: CoreConstants.settingsController,
+  );
+
   static final Widget addAlarmPage = AddEditAlarmView(
     isAddAlarm: true,
-    addEditAlarmController: AddEditAlarmController(
-      alarmsRepository: AlarmsRepository(),
-    ),
+    addEditAlarmController: CoreConstants.addEditAlarmController,
   );
 
   static final Widget editAlarmPage = AddEditAlarmView(
     isAddAlarm: false,
-    addEditAlarmController: AddEditAlarmController(
-      alarmsRepository: AlarmsRepository(),
-    ),
+    addEditAlarmController: CoreConstants.addEditAlarmController,
   );
 
-  static final Widget settingsPage = SettingsView(
-    settingsController: CoreConstants.settingsController,
+  static final Widget addHabitPage = AddEditHabitView(
+    isAddHabit: true,
+    addEditHabitController: CoreConstants.addEditHabitController,
+  );
+
+  static final Widget editHabitPage = AddEditHabitView(
+    isAddHabit: false,
+    addEditHabitController: CoreConstants.addEditHabitController,
   );
 
   static void navigateWithSlideTransition(BuildContext context, Widget page) =>

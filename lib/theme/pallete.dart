@@ -21,7 +21,7 @@ class PalleteLight {
 
   static const Color actionColor = Color.fromRGBO(67, 180, 241, 1);
 
-  static const Color backgroundColor = Color.fromRGBO(41, 119, 161, 1);
+  static const Color backgroundColor = Color.fromARGB(136, 64, 133, 179);
 }
 
 class PalleteDark {

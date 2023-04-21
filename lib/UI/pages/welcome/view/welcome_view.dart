@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../theme/fonts.dart';
-import '../../../../theme/pallete.dart';
-import '../../../common/save_button.dart';
+import '../../../common/action_button.dart';
 import '../controller/welcome_controller.dart';
 
 class WelcomeView extends StatelessWidget {
@@ -13,43 +12,44 @@ class WelcomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: PalleteLight.backgroundGradient,
-        ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                'assets/images/alarm3D.png',
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Welcome',
+              style: AppFonts.timeStyle,
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              child: Text(
+                'Thanks for installing my app. This app has alarm functionality, habit tracker and timer, hope you enjoy it.',
+                textAlign: TextAlign.center,
+                style: AppFonts.titleStyle,
               ),
-              Text(
-                'Welcome',
-                style:
-                    AppFonts.headerStyle.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              child: Text(
+                'I wish you a pleasant use!',
+                textAlign: TextAlign.center,
+                style: AppFonts.titleStyle,
               ),
-              const SizedBox(
-                height: 15,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Text(
-                  'Thanks for installing my app. This app has alarm functionality, habit tracker and timer, hope you enjoy it. I wish you a pleasant use!',
-                  textAlign: TextAlign.justify,
-                  style:
-                      AppFonts.titleStyle.copyWith(fontWeight: FontWeight.bold),
-                ),
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              ActionButton(
-                onTap: _welcomeController.onLetsStartTap,
-                text: 'Lets start!',
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            ActionButton(
+              onTap: _welcomeController.onLetsStartTap,
+              text: 'Lets start!',
+            ),
+          ],
         ),
       ),
     );

@@ -10,7 +10,7 @@ import '../../../../theme/theme.dart';
 import '../controller/add_edit_alarm_controller.dart';
 import '../widgets/alarm_picker.dart';
 import '../../../common/alarm_schedule.dart';
-import '../widgets/alarm_settings.dart';
+import '../../../common/add_edit_settings.dart';
 
 class AddEditAlarmView extends StatefulWidget {
   final bool isAddAlarm;
@@ -99,8 +99,10 @@ class _AddEditAlarmViewState extends State<AddEditAlarmView> {
                     .onMinuteChanged(context, minute),
               ),
             ),
-            const AlarmSchedule(),
-            AlarmSettings(
+            const AlarmSchedule(
+              isAlarm: true,
+            ),
+            AddEditSettings(
               onSave: () => widget._addEditAlarmController.onSave(
                 context,
                 id: addEditAlarmState.id,
@@ -111,6 +113,8 @@ class _AddEditAlarmViewState extends State<AddEditAlarmView> {
                 weekdays: addEditAlarmState.weekdays,
               ),
               nameController: _nameController,
+              nameHintText: 'Alarm name',
+              isAlarm: true,
             ),
           ],
         ),

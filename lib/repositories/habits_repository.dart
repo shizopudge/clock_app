@@ -3,6 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
 
 import '../models/habit/habit.dart';
+import '../services/alarm_services.dart';
 import '../storage/database.dart';
 
 abstract class IHabitsRepository {
@@ -43,10 +44,11 @@ class HabitsRepository extends IHabitsRepository {
   HabitsRepository._internal();
 
   @override
-  Future<void> createHabit(
-      {required String name,
-      required String? description,
-      required int interval}) async {
+  Future<void> createHabit({
+    required String name,
+    required String? description,
+    required int interval,
+  }) async {
     try {
       final bool isHabitBoxOpened = Hive.isBoxOpen(DatabaseHelper.habitsBox);
       if (isHabitBoxOpened) {
@@ -59,7 +61,9 @@ class HabitsRepository extends IHabitsRepository {
           interval: interval,
           isEnabled: true,
         );
-        await habitsBox.put(id, habit);
+        await habitsBox.put(id, habit).whenComplete(
+              () async => await AlarmServices().scheduleHabit(habit),
+            );
       } else {
         debugPrint('Habits box is closed!');
       }
@@ -86,7 +90,9 @@ class HabitsRepository extends IHabitsRepository {
           interval: interval,
           isEnabled: true,
         );
-        await habitsBox.put(id, habit);
+        await habitsBox.put(id, habit).whenComplete(
+              () async => await AlarmServices().scheduleHabit(habit),
+            );
       } else {
         debugPrint('Habits box is closed!');
       }
@@ -101,7 +107,9 @@ class HabitsRepository extends IHabitsRepository {
       final bool isHabitBoxOpened = Hive.isBoxOpen(DatabaseHelper.habitsBox);
       if (isHabitBoxOpened) {
         final habitsBox = Hive.box<Habit>(DatabaseHelper.habitsBox);
-        await habitsBox.delete(id);
+        await habitsBox.delete(id).whenComplete(
+              () async => await AlarmServices().cancelHabitSchedule(id),
+            );
       } else {
         debugPrint('Habits box is closed!');
       }
@@ -116,7 +124,9 @@ class HabitsRepository extends IHabitsRepository {
       final bool isHabitBoxOpened = Hive.isBoxOpen(DatabaseHelper.habitsBox);
       if (isHabitBoxOpened) {
         final habitsBox = Hive.box<Habit>(DatabaseHelper.habitsBox);
-        await habitsBox.deleteAll(ids);
+        await habitsBox.deleteAll(ids).whenComplete(
+              () async => await AlarmServices().cancelHabitSchedules(ids),
+            );
       } else {
         debugPrint('Habits box is closed!');
       }
@@ -135,10 +145,14 @@ class HabitsRepository extends IHabitsRepository {
         if (habit != null) {
           if (habit.isEnabled) {
             final Habit updatedHabit = habit.copyWith(isEnabled: false);
-            await habitsBox.put(id, updatedHabit);
+            await habitsBox.put(id, updatedHabit).whenComplete(
+                  () async => await AlarmServices().cancelHabitSchedule(id),
+                );
           } else {
             final Habit updatedHabit = habit.copyWith(isEnabled: true);
-            await habitsBox.put(id, updatedHabit);
+            await habitsBox.put(id, updatedHabit).whenComplete(
+                  () async => await AlarmServices().scheduleHabit(updatedHabit),
+                );
           }
         }
       } else {
@@ -170,7 +184,11 @@ class HabitsRepository extends IHabitsRepository {
         for (Habit habit in updatedHabits) {
           updatedHabitsMap[habit.id] = habit;
         }
-        await habitsBox.putAll(updatedHabitsMap);
+        await habitsBox.putAll(updatedHabitsMap).whenComplete(
+              () async => await AlarmServices().scheduleHabits(
+                updatedHabits,
+              ),
+            );
       } else {
         debugPrint('Alarms box is closed!');
       }

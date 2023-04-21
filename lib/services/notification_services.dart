@@ -43,6 +43,17 @@ class NotificationServices {
           enableVibration: false,
           playSound: false,
         ),
+        NotificationChannel(
+          channelGroupKey: 'habit_notifications_channel_group',
+          channelKey: 'habit_notifications_channel',
+          channelName: 'Habit notifications',
+          channelDescription: 'Habit notification channel',
+          defaultColor: Colors.white,
+          ledColor: Colors.white,
+          importance: NotificationImportance.Max,
+          enableVibration: true,
+          playSound: true,
+        ),
       ],
       channelGroups: [
         NotificationChannelGroup(
@@ -53,6 +64,10 @@ class NotificationServices {
           channelGroupName: 'Pre Alarm notifications group',
           channelGroupKey: 'pre_alarm_notifications_channel_group',
         ),
+        NotificationChannelGroup(
+          channelGroupName: 'Habit notifications group',
+          channelGroupKey: 'habit_notifications_channel_group',
+        ),
       ],
       debug: true,
     );
@@ -60,7 +75,20 @@ class NotificationServices {
     await AwesomeNotifications().isNotificationAllowed().then(
       (isAllowed) async {
         if (!isAllowed) {
-          await AwesomeNotifications().requestPermissionToSendNotifications();
+          await AwesomeNotifications()
+              .requestPermissionToSendNotifications(permissions: [
+            NotificationPermission.Alert,
+            NotificationPermission.Car,
+            NotificationPermission.Badge,
+            NotificationPermission.CriticalAlert,
+            NotificationPermission.FullScreenIntent,
+            NotificationPermission.Light,
+            NotificationPermission.OverrideDnD,
+            NotificationPermission.PreciseAlarms,
+            NotificationPermission.Provisional,
+            NotificationPermission.Sound,
+            NotificationPermission.Vibration,
+          ]);
         }
       },
     );
@@ -91,7 +119,7 @@ class NotificationServices {
     final bool scheduled = false,
     final bool showWhen = true,
     final bool fullScreenIntent = false,
-    final bool criticalAlert = false,
+    final bool criticalAlert = true,
   }) async {
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
@@ -118,6 +146,61 @@ class NotificationServices {
           ? NotificationCalendar.fromDate(
               date: dateTime,
               allowWhileIdle: true,
+              preciseAlarm: true,
+            )
+          : null,
+    );
+  }
+
+  @pragma('vm:entry-point')
+  static Future<void> scheduleHabit({
+    required int id,
+    required final String title,
+    required final String body,
+    required final String channelKey,
+    required final String groupKey,
+    required final int interval,
+    final String? summary,
+    final Map<String, String>? payload,
+    final ActionType actionType = ActionType.Default,
+    final NotificationCategory notificationCategory =
+        NotificationCategory.Reminder,
+    final NotificationLayout notificationLayout = NotificationLayout.Default,
+    final String? bigPicture,
+    final List<NotificationActionButton>? actionButtons,
+    final bool scheduled = true,
+    final bool showWhen = true,
+    final bool fullScreenIntent = false,
+    final bool criticalAlert = true,
+  }) async {
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: id,
+        channelKey: channelKey,
+        groupKey: groupKey,
+        displayOnForeground: true,
+        displayOnBackground: true,
+        wakeUpScreen: true,
+        criticalAlert: criticalAlert,
+        fullScreenIntent: fullScreenIntent,
+        notificationLayout: notificationLayout,
+        category: notificationCategory,
+        payload: payload,
+        title: title,
+        body: body,
+        showWhen: showWhen,
+        summary: summary,
+        bigPicture: bigPicture,
+        actionType: actionType,
+      ),
+      actionButtons: actionButtons,
+      schedule: scheduled
+          ? NotificationInterval(
+              interval: interval,
+              timeZone:
+                  await AwesomeNotifications().getLocalTimeZoneIdentifier(),
+              allowWhileIdle: true,
+              preciseAlarm: true,
             )
           : null,
     );
@@ -159,7 +242,6 @@ class NotificationServices {
       final int preAlarmNotificationId =
           int.parse(preAlarmNotificationIdString);
       await AwesomeNotifications().dismiss(preAlarmNotificationId);
-      //? await AwesomeNotifications().dismissNotificationsByChannelKey('pre_alarm_notifications_channel');
       final bool isRepeatingAlarm =
           AlarmsRepository().checkIsRepeatingAlarm(alarmId) ?? false;
       if (!isRepeatingAlarm) {

@@ -109,4 +109,20 @@ class AppUtils {
         schedule?['hour'] as int,
         schedule?['minute'] as int);
   }
+
+  static String formatInterval(int interval) {
+    int formatedInterval;
+    String unit;
+    if (interval < 3600) {
+      formatedInterval = interval ~/ 60;
+      unit = 'm';
+    } else if (interval >= 3600 && interval < 86400) {
+      formatedInterval = interval ~/ 3600;
+      unit = 'h';
+    } else {
+      formatedInterval = interval ~/ 86400;
+      unit = 'd';
+    }
+    return '$formatedInterval $unit';
+  }
 }
