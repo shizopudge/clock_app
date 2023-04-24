@@ -28,16 +28,17 @@ class AddEditSettings extends StatelessWidget {
   Widget build(BuildContext context) {
     final String theme = Hive.box(DatabaseHelper.settingsBox)
         .get('theme', defaultValue: AppTheme.defaultTheme);
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.only(
+    return Card(
+      color: theme == AppTheme.darkThemeName
+          ? PalleteDark.fullBlack
+          : PalleteLight.primaryColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
           topLeft: Radius.circular(21),
           topRight: Radius.circular(21),
         ),
-        color: theme == AppTheme.darkThemeName ? PalleteDark.fullBlack : null,
-        gradient:
-            theme == AppTheme.lightThemeName ? PalleteLight.alarmCardBg : null,
       ),
+      margin: const EdgeInsets.all(0),
       child: Column(
         children: [
           if (isAlarm)

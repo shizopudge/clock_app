@@ -55,8 +55,7 @@ class AlarmController extends IAlarmController {
 
   final Debounce scheduleNotifications = debounce(
     () async {
-      final List<Alarm> launchedAlarms = AlarmsRepository().getEnabledAlarms();
-      await AlarmServices().scheduleAlarms(launchedAlarms);
+      await AlarmServices().scheduleAlarms();
     },
     const Duration(
       milliseconds: 1000,

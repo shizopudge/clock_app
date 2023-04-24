@@ -6,10 +6,12 @@ import '../../theme/pallete.dart';
 class ActionButton extends StatelessWidget {
   final VoidCallback onTap;
   final String text;
+  final Color? color;
   const ActionButton({
     super.key,
     required this.onTap,
     required this.text,
+    this.color,
   });
 
   @override
@@ -22,7 +24,7 @@ class ActionButton extends StatelessWidget {
             12,
           ),
         ),
-        backgroundColor: Pallete.actionColor,
+        backgroundColor: color ?? Pallete.actionColor,
         padding: const EdgeInsets.all(8),
       ),
       child: Padding(

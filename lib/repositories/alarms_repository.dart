@@ -23,6 +23,8 @@ abstract class IAlarmsRepository {
 
   List<Alarm> getEnabledAlarms();
 
+  Future<void> disableAlarm(String id);
+
   Future<void> enableAlarm(String id);
 
   Future<void> enableAlarms(List<String> ids);
@@ -142,7 +144,6 @@ class AlarmsRepository extends IAlarmsRepository {
     }
   }
 
-  @pragma('vm:entry-point')
   @override
   List<Alarm> getEnabledAlarms() {
     try {
@@ -164,6 +165,27 @@ class AlarmsRepository extends IAlarmsRepository {
     } on Exception catch (e) {
       debugPrint('Exception: ${e.toString}!');
       return [];
+    }
+  }
+
+  @override
+  Future<void> disableAlarm(String id) async {
+    try {
+      final bool isBoxOpened = Hive.isBoxOpen(DatabaseHelper.alarmsBox);
+      if (isBoxOpened) {
+        final Box<Alarm> alarmsBox = Hive.box<Alarm>(DatabaseHelper.alarmsBox);
+        final Alarm? alarm = alarmsBox.get(id);
+        if (alarm != null) {
+          if (alarm.isEnabled) {
+            final Alarm updatedAlarm = alarm.copyWith(isEnabled: false);
+            await alarmsBox.put(id, updatedAlarm);
+          }
+        }
+      } else {
+        debugPrint('Alarms box is closed!');
+      }
+    } on Exception catch (e) {
+      debugPrint('Exception: ${e.toString}!');
     }
   }
 
@@ -197,6 +219,7 @@ class AlarmsRepository extends IAlarmsRepository {
       final bool isBoxOpened = Hive.isBoxOpen(DatabaseHelper.alarmsBox);
       if (isBoxOpened) {
         List<Alarm> updatedAlarms = [];
+        List<String> disabledAlarmsIds = [];
         Map<dynamic, Alarm> updatedAlarmsMap = {};
         final Box<Alarm> alarmsBox = Hive.box<Alarm>(DatabaseHelper.alarmsBox);
         final alarms = alarmsBox.values.toList();
@@ -204,6 +227,7 @@ class AlarmsRepository extends IAlarmsRepository {
           if (ids.contains(alarm.id)) {
             if (alarm.isEnabled) {
               updatedAlarms.add(alarm.copyWith(isEnabled: false));
+              disabledAlarmsIds.add(alarm.id);
             } else {
               updatedAlarms.add(alarm.copyWith(isEnabled: true));
             }
@@ -241,7 +265,16 @@ class AlarmsRepository extends IAlarmsRepository {
     try {
       final bool isBoxOpened = Hive.isBoxOpen(DatabaseHelper.alarmsBox);
       if (isBoxOpened) {
+        List<Alarm> deletedAlarms = [];
         final Box<Alarm> alarmsBox = Hive.box<Alarm>(DatabaseHelper.alarmsBox);
+        final List<Alarm> alarms = alarmsBox.values.toList();
+        for (String id in ids) {
+          for (Alarm alarm in alarms) {
+            if (alarm.id == id) {
+              deletedAlarms.add(alarm);
+            }
+          }
+        }
         await alarmsBox.deleteAll(ids);
       } else {
         debugPrint('Alarms box is closed!');
@@ -299,6 +332,7 @@ class AlarmsRepository extends IAlarmsRepository {
   }
 
   @override
+  @pragma('vm:entry-point')
   bool? checkIsRepeatingAlarm(String id) {
     try {
       final bool isBoxOpened = Hive.isBoxOpen(DatabaseHelper.alarmsBox);

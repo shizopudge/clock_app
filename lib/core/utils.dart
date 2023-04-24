@@ -1,12 +1,58 @@
+import 'package:alarm_app/theme/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 
 import 'package:intl/intl.dart';
 
+import '../theme/pallete.dart';
+
 class AppUtils {
   static final DateFormat _dateFormat = DateFormat('EEE, d MMM');
 
   static final DateFormat _timeFormat = DateFormat('Hm');
+
+  static const List<String> daysList = [
+    'Mon',
+    'Tue',
+    'Wed',
+    'Thu',
+    'Fri',
+    'Sat',
+    'Sun'
+  ];
+
+  static const List<Map<int, String>> intervals = [
+    {
+      900: 'min',
+    },
+    {
+      1800: 'min',
+    },
+    {
+      3600: 'hour',
+    },
+    {
+      7200: 'hour',
+    },
+    {
+      10800: 'hour',
+    },
+    {
+      14400: 'hour',
+    },
+    {
+      18000: 'hour',
+    },
+    {
+      21600: 'hour',
+    },
+    {
+      43200: 'hour',
+    },
+    {
+      86400: 'day',
+    },
+  ];
 
   static void showSnackBar(
     BuildContext context,
@@ -124,5 +170,146 @@ class AppUtils {
       unit = 'd';
     }
     return '$formatedInterval $unit';
+  }
+
+  static int convertTimerToSeconds({
+    required int hour,
+    required int minute,
+    required int second,
+  }) {
+    return (hour * 3600 + minute * 60 + second);
+  }
+
+  static Text convertSecondsBeforeTimerAlarm({
+    required int secondsBeforeTimerAlarm,
+    required double fontSize,
+    required bool isPassed,
+  }) {
+    late final int hours;
+    late final int minutes;
+    late final int seconds;
+    if (isPassed) {
+      if (secondsBeforeTimerAlarm > 3600) {
+        hours = (secondsBeforeTimerAlarm / 3600).floor();
+        minutes = (secondsBeforeTimerAlarm % 3600 / 60).floor();
+        seconds = (secondsBeforeTimerAlarm % 3600 % 60).floor();
+        return Text(
+          'Passed\n$hours h. $minutes min. $seconds sec.',
+          textAlign: TextAlign.center,
+          style: AppFonts.labelStyle.copyWith(
+            color: Pallete.actionColor,
+            fontWeight: FontWeight.bold,
+            fontSize: fontSize,
+          ),
+        );
+      } else if (secondsBeforeTimerAlarm == 3600) {
+        hours = 1;
+        return Text(
+          'Passed\n$hours h.',
+          textAlign: TextAlign.center,
+          style: AppFonts.labelStyle.copyWith(
+            color: Pallete.actionColor,
+            fontWeight: FontWeight.bold,
+            fontSize: fontSize,
+          ),
+        );
+      } else if (secondsBeforeTimerAlarm < 3600 &&
+          secondsBeforeTimerAlarm > 60) {
+        minutes = (secondsBeforeTimerAlarm % 3600 / 60).floor();
+        seconds = (secondsBeforeTimerAlarm % 3600 % 60).floor();
+        return Text(
+          'Passed\n$minutes min. $seconds sec.',
+          textAlign: TextAlign.center,
+          style: AppFonts.labelStyle.copyWith(
+            color: Pallete.actionColor,
+            fontWeight: FontWeight.bold,
+            fontSize: fontSize,
+          ),
+        );
+      } else if (secondsBeforeTimerAlarm == 60) {
+        minutes = 1;
+        return Text(
+          'Passed\n$minutes min.',
+          textAlign: TextAlign.center,
+          style: AppFonts.labelStyle.copyWith(
+            color: Pallete.actionColor,
+            fontWeight: FontWeight.bold,
+            fontSize: fontSize,
+          ),
+        );
+      } else {
+        seconds = (secondsBeforeTimerAlarm % 3600 % 60).floor();
+        return Text(
+          'Passed\n$seconds sec.',
+          textAlign: TextAlign.center,
+          style: AppFonts.labelStyle.copyWith(
+            color: Pallete.actionColor,
+            fontWeight: FontWeight.bold,
+            fontSize: fontSize,
+          ),
+        );
+      }
+    } else {
+      if (secondsBeforeTimerAlarm > 3600) {
+        hours = (secondsBeforeTimerAlarm / 3600).floor();
+        minutes = (secondsBeforeTimerAlarm % 3600 / 60).floor();
+        seconds = (secondsBeforeTimerAlarm % 3600 % 60).floor();
+        return Text(
+          'The timer duration is set to $hours h. $minutes min. $seconds sec.',
+          textAlign: TextAlign.center,
+          style: AppFonts.labelStyle.copyWith(
+            color: Pallete.actionColor,
+            fontWeight: FontWeight.bold,
+            fontSize: fontSize,
+          ),
+        );
+      } else if (secondsBeforeTimerAlarm == 3600) {
+        hours = 1;
+        return Text(
+          'The timer duration is set to $hours h.',
+          textAlign: TextAlign.center,
+          style: AppFonts.labelStyle.copyWith(
+            color: Pallete.actionColor,
+            fontWeight: FontWeight.bold,
+            fontSize: fontSize,
+          ),
+        );
+      } else if (secondsBeforeTimerAlarm < 3600 &&
+          secondsBeforeTimerAlarm > 60) {
+        minutes = (secondsBeforeTimerAlarm % 3600 / 60).floor();
+        seconds = (secondsBeforeTimerAlarm % 3600 % 60).floor();
+        return Text(
+          'The timer duration is set to $minutes min. $seconds sec.',
+          textAlign: TextAlign.center,
+          style: AppFonts.labelStyle.copyWith(
+            color: Pallete.actionColor,
+            fontWeight: FontWeight.bold,
+            fontSize: fontSize,
+          ),
+        );
+      } else if (secondsBeforeTimerAlarm == 60) {
+        minutes = 1;
+        return Text(
+          'The timer duration is set to $minutes min.',
+          textAlign: TextAlign.center,
+          style: AppFonts.labelStyle.copyWith(
+            color: Pallete.actionColor,
+            fontWeight: FontWeight.bold,
+            fontSize: fontSize,
+          ),
+        );
+      } else {
+        seconds = (secondsBeforeTimerAlarm % 3600 % 60).floor();
+        return Text(
+          'The timer duration is set to $seconds sec.',
+          textAlign: TextAlign.center,
+          style: AppFonts.labelStyle.copyWith(
+            color: Pallete.actionColor,
+            fontWeight: FontWeight.bold,
+            fontSize: fontSize,
+          ),
+        );
+      }
+    }
   }
 }

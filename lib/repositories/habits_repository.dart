@@ -190,7 +190,7 @@ class HabitsRepository extends IHabitsRepository {
               ),
             );
       } else {
-        debugPrint('Alarms box is closed!');
+        debugPrint('Habits box is closed!');
       }
     } on Exception catch (e) {
       debugPrint('Exception: ${e.toString}!');

@@ -16,6 +16,13 @@ class WelcomeView extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Image.asset(
+                'assets/logo.png',
+                height: 200,
+              ),
+            ),
             Text(
               'Welcome',
               style: AppFonts.timeStyle,
@@ -26,7 +33,7 @@ class WelcomeView extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15.0),
               child: Text(
-                'Thanks for installing my app. This app has alarm functionality, habit tracker and timer, hope you enjoy it.',
+                'Thanks for installing my app. This app has alarm functionality, habit reminder and timer, hope you enjoy it.',
                 textAlign: TextAlign.center,
                 style: AppFonts.titleStyle,
               ),

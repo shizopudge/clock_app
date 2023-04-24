@@ -8,3 +8,10 @@ enum FilterType {
   onlyEnabled,
   onlyDisabled,
 }
+
+enum TimerStatus {
+  stopped,
+  running,
+  paused,
+  alarm,
+}

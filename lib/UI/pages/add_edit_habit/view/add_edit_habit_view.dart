@@ -3,13 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../../bloc/add_edit_habit/add_edit_habit_cubit.dart';
-import '../../../../core/ui_utils.dart';
 import '../../../../core/utils.dart';
 import '../../../../storage/database.dart';
 import '../../../../theme/pallete.dart';
 import '../../../../theme/theme.dart';
 import '../../../common/add_edit_settings.dart';
-import '../../../common/alarm_schedule.dart';
 import '../controller/add_edit_habit_controller.dart';
 import '../widgets/interval_picker.dart';
 
@@ -50,6 +48,21 @@ class _AddEditHabitViewState extends State<AddEditHabitView> {
           text: context.read<AddEditHabitCubit>().state.name);
       _descriptionController = TextEditingController(
           text: context.read<AddEditHabitCubit>().state.description ?? '');
+      final int currentInterval =
+          context.read<AddEditHabitCubit>().state.interval;
+      for (int i = 0; i < AppUtils.intervals.length; i++) {
+        if (currentInterval == AppUtils.intervals[i].keys.first) {
+          context.read<IntervalPickerCubit>().setItemIndex(i);
+        }
+      }
+      final int currentItemIndex = context.read<IntervalPickerCubit>().state;
+      Future.delayed(
+          const Duration(milliseconds: 150),
+          () => _scrollController.animateTo(
+                (150 * currentItemIndex).toDouble(),
+                duration: const Duration(milliseconds: 750),
+                curve: Curves.linear,
+              ));
     }
   }
 
@@ -85,11 +98,8 @@ class _AddEditHabitViewState extends State<AddEditHabitView> {
             if (!isKeyboardVisible)
               IntervalPicker(
                 controller: _scrollController,
-                intervals: UIUtils.intervals,
+                intervals: AppUtils.intervals,
               ),
-            const AlarmSchedule(
-              isAlarm: false,
-            ),
             AddEditSettings(
               nameController: _nameController,
               descriptionController: _descriptionController,

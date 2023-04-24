@@ -8,9 +8,38 @@ import '../core/utils.dart';
 
 import '../models/alarm/alarm.dart';
 import '../models/habit/habit.dart';
+import '../repositories/alarms_repository.dart';
 import 'notification_services.dart';
 
-class AlarmServices {
+abstract class IAlarmServices {
+  Future<void> scheduleAlarms();
+
+  Future<void> cancelAlarmNotification(String alarmNotificationId);
+
+  Future<void> dismissPreAlarmNotification(String preAlarmNotificationId);
+
+  Future<void> scheduleHabit(Habit habit);
+
+  Future<void> scheduleHabits(List<Habit> habits);
+
+  Future<void> cancelHabitSchedule(String habitId);
+
+  Future<void> cancelHabitSchedules(List<String> habitsIds);
+
+  Future<void> scheduleOneAlarmNotification(
+      {required DateTime alarmTime,
+      required Alarm alarm,
+      required int alarmNotificationId,
+      required int preAlarmNotificationId});
+
+  Future<void> scheduleOnePreAlarmNotification(
+      {required DateTime preAlarmNotificationTime,
+      required Alarm alarm,
+      required int alarmNotificationId,
+      required int preAlarmNotificationId});
+}
+
+class AlarmServices extends IAlarmServices {
   static final AlarmServices _alarmServices = AlarmServices._internal();
 
   factory AlarmServices() {
@@ -19,16 +48,16 @@ class AlarmServices {
 
   AlarmServices._internal();
 
-  @pragma('vm:entry-point')
-  Future<void> scheduleAlarms(List<Alarm> alarms,
-      {bool isFromWorkmanager = false}) async {
+  @override
+  Future<void> scheduleAlarms() async {
     DateTime alarmTime;
     DateTime preAlarmNotificationTime;
     await AwesomeNotifications()
         .cancelSchedulesByChannelKey('alarm_notifications_channel');
     await AwesomeNotifications()
         .cancelSchedulesByChannelKey('pre_alarm_notifications_channel');
-    for (Alarm alarm in alarms) {
+    final List<Alarm> enabledAlarms = AlarmsRepository().getEnabledAlarms();
+    for (Alarm alarm in enabledAlarms) {
       if (alarm.weekdays.isEmpty) {
         alarmTime =
             AppUtils.getNotificationTime(alarm.time.hour, alarm.time.minute);
@@ -38,18 +67,18 @@ class AlarmServices {
           debugPrint(alarmTime.toIso8601String());
           final int alarmNotificationId = Random().nextInt(959883616);
           final int preAlarmNotificationId = Random().nextInt(959883616);
-          _scheduleOneAlarmNotification(
-            alarmNotificationId: alarmNotificationId,
-            preAlarmNotificationId: preAlarmNotificationId,
+          scheduleOneAlarmNotification(
             alarmTime: alarmTime,
             alarm: alarm,
+            alarmNotificationId: alarmNotificationId,
+            preAlarmNotificationId: preAlarmNotificationId,
           );
           if (preAlarmNotificationTime.isAfter(DateTime.now())) {
-            _scheduleOnePreAlarmNotification(
-              alarmNotificationId: alarmNotificationId,
-              preAlarmNotificationId: preAlarmNotificationId,
+            scheduleOnePreAlarmNotification(
               preAlarmNotificationTime: preAlarmNotificationTime,
               alarm: alarm,
+              alarmNotificationId: alarmNotificationId,
+              preAlarmNotificationId: preAlarmNotificationId,
             );
           }
         } else {
@@ -66,17 +95,17 @@ class AlarmServices {
           debugPrint(alarmTime.toIso8601String());
           final int alarmNotificationId = Random().nextInt(959883616);
           final int preAlarmNotificationId = Random().nextInt(959883616);
-          _scheduleOneAlarmNotification(
-            alarmNotificationId: alarmNotificationId,
-            preAlarmNotificationId: preAlarmNotificationId,
+          scheduleOneAlarmNotification(
             alarmTime: alarmTime,
             alarm: alarm,
-          );
-          _scheduleOnePreAlarmNotification(
             alarmNotificationId: alarmNotificationId,
             preAlarmNotificationId: preAlarmNotificationId,
+          );
+          scheduleOnePreAlarmNotification(
             preAlarmNotificationTime: preAlarmNotificationTime,
             alarm: alarm,
+            alarmNotificationId: alarmNotificationId,
+            preAlarmNotificationId: preAlarmNotificationId,
           );
         }
       } else {
@@ -90,18 +119,18 @@ class AlarmServices {
           debugPrint(alarmTime.toIso8601String());
           final int alarmNotificationId = Random().nextInt(959883616);
           final int preAlarmNotificationId = Random().nextInt(959883616);
-          _scheduleOneAlarmNotification(
-            alarmNotificationId: alarmNotificationId,
-            preAlarmNotificationId: preAlarmNotificationId,
+          scheduleOneAlarmNotification(
             alarmTime: alarmTime,
             alarm: alarm,
+            alarmNotificationId: alarmNotificationId,
+            preAlarmNotificationId: preAlarmNotificationId,
           );
           if (preAlarmNotificationTime.isAfter(DateTime.now())) {
-            _scheduleOnePreAlarmNotification(
-              alarmNotificationId: alarmNotificationId,
-              preAlarmNotificationId: preAlarmNotificationId,
+            scheduleOnePreAlarmNotification(
               preAlarmNotificationTime: preAlarmNotificationTime,
               alarm: alarm,
+              alarmNotificationId: alarmNotificationId,
+              preAlarmNotificationId: preAlarmNotificationId,
             );
           }
         } else {
@@ -120,37 +149,70 @@ class AlarmServices {
             debugPrint(alarmTime.toIso8601String());
             final int alarmNotificationId = Random().nextInt(959883616);
             final int preAlarmNotificationId = Random().nextInt(959883616);
-            _scheduleOneAlarmNotification(
-              alarmNotificationId: alarmNotificationId,
-              preAlarmNotificationId: preAlarmNotificationId,
+            scheduleOneAlarmNotification(
               alarmTime: alarmTime,
               alarm: alarm,
-            );
-            _scheduleOnePreAlarmNotification(
               alarmNotificationId: alarmNotificationId,
               preAlarmNotificationId: preAlarmNotificationId,
+            );
+            scheduleOnePreAlarmNotification(
               preAlarmNotificationTime: preAlarmNotificationTime,
               alarm: alarm,
+              alarmNotificationId: alarmNotificationId,
+              preAlarmNotificationId: preAlarmNotificationId,
             );
           }
         }
       }
     }
-    final a = await AwesomeNotifications().listScheduledNotifications();
-    debugPrint(a.length.toString());
+    final listScheduledNotifications =
+        await AwesomeNotifications().listScheduledNotifications();
+    debugPrint(listScheduledNotifications.length.toString());
   }
 
-  Future<void> cancelHabitSchedules(
-    List<String> habitsIds,
-  ) async {
-    for (String habitId in habitsIds) {
-      await cancelHabitSchedule(habitId);
+  @override
+  Future<void> cancelAlarmNotification(String alarmNotificationId) async {
+    final int id = int.parse(alarmNotificationId);
+    await AwesomeNotifications().cancel(id);
+  }
+
+  @override
+  Future<void> dismissPreAlarmNotification(
+      String preAlarmNotificationId) async {
+    final int id = int.parse(preAlarmNotificationId);
+    await AwesomeNotifications().dismiss(id);
+  }
+
+  @override
+  Future<void> scheduleHabit(Habit habit) async {
+    bool isAlreadyExists = false;
+    final scheduledNotifications =
+        await AwesomeNotifications().listScheduledNotifications();
+    for (NotificationModel notification in scheduledNotifications) {
+      final payload = notification.content?.payload ?? {};
+      if (payload['habitId'] == habit.id) {
+        isAlreadyExists = true;
+      }
+    }
+    if (!isAlreadyExists) {
+      final int habitId = Random().nextInt(959883616);
+      await NotificationServices.scheduleHabit(
+        id: habitId,
+        title: habit.name,
+        body: habit.description ?? '',
+        channelKey: 'habit_notifications_channel',
+        groupKey: 'habit_notifications_channel_group',
+        interval: habit.interval,
+        scheduled: true,
+        payload: {
+          'habitId': habit.id,
+        },
+      );
     }
   }
 
-  Future<void> scheduleHabits(
-    List<Habit> habits,
-  ) async {
+  @override
+  Future<void> scheduleHabits(List<Habit> habits) async {
     for (Habit habit in habits) {
       if (habit.isEnabled) {
         await scheduleHabit(habit);
@@ -160,27 +222,8 @@ class AlarmServices {
     }
   }
 
-  Future<void> scheduleHabit(
-    Habit habit,
-  ) async {
-    final int habitId = Random().nextInt(959883616);
-    await NotificationServices.scheduleHabit(
-      id: habitId,
-      title: habit.name,
-      body: habit.description ?? '',
-      channelKey: 'habit_notifications_channel',
-      groupKey: 'habit_notifications_channel_group',
-      interval: habit.interval,
-      scheduled: true,
-      payload: {
-        'habitId': habit.id,
-      },
-    );
-  }
-
-  Future<void> cancelHabitSchedule(
-    String habitId,
-  ) async {
+  @override
+  Future<void> cancelHabitSchedule(String habitId) async {
     final scheduledNotifications =
         await AwesomeNotifications().listScheduledNotifications();
     for (NotificationModel notification in scheduledNotifications) {
@@ -191,13 +234,19 @@ class AlarmServices {
     }
   }
 
-  @pragma('vm:entry-point')
-  Future<void> _scheduleOneAlarmNotification({
-    required int alarmNotificationId,
-    required int preAlarmNotificationId,
-    required DateTime alarmTime,
-    required Alarm alarm,
-  }) async {
+  @override
+  Future<void> cancelHabitSchedules(List<String> habitsIds) async {
+    for (String habitId in habitsIds) {
+      await cancelHabitSchedule(habitId);
+    }
+  }
+
+  @override
+  Future<void> scheduleOneAlarmNotification(
+      {required DateTime alarmTime,
+      required Alarm alarm,
+      required int alarmNotificationId,
+      required int preAlarmNotificationId}) async {
     await NotificationServices.scheduleNotification(
       id: alarmNotificationId,
       title: AppUtils.formatTime(alarm.time),
@@ -225,13 +274,12 @@ class AlarmServices {
     );
   }
 
-  @pragma('vm:entry-point')
-  Future<void> _scheduleOnePreAlarmNotification({
-    required int alarmNotificationId,
-    required int preAlarmNotificationId,
-    required DateTime preAlarmNotificationTime,
-    required Alarm alarm,
-  }) async {
+  @override
+  Future<void> scheduleOnePreAlarmNotification(
+      {required DateTime preAlarmNotificationTime,
+      required Alarm alarm,
+      required int alarmNotificationId,
+      required int preAlarmNotificationId}) async {
     await NotificationServices.scheduleNotification(
       id: preAlarmNotificationId,
       title: 'Alarm clock at ${AppUtils.formatTime(alarm.time)}',

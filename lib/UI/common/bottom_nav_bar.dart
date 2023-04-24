@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../bloc/alarm_view/alarm_view_cubit.dart';
 import '../../bloc/habit_view/habit_view_cubit.dart';
 import '../../core/ui_utils.dart';
-import '../../storage/database.dart';
 import '../../theme/fonts.dart';
 import '../../theme/pallete.dart';
-import '../../theme/theme.dart';
 import '../base/controller/base_controller.dart';
 
 class BottomNavBar extends StatelessWidget {
@@ -26,239 +23,127 @@ class BottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (alarmViewState.isEditMode) {
-      return ValueListenableBuilder(
-        valueListenable: Hive.box(DatabaseHelper.settingsBox).listenable(),
-        builder: (context, box, _) {
-          final String theme =
-              box.get('theme', defaultValue: AppTheme.defaultTheme);
-          return Container(
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(30.0),
-                topRight: Radius.circular(30.0),
+      return Container(
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30.0),
+            topRight: Radius.circular(30.0),
+          ),
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(30.0),
+            topRight: Radius.circular(30.0),
+          ),
+          child: BottomNavigationBar(
+            showSelectedLabels: true,
+            showUnselectedLabels: true,
+            enableFeedback: false,
+            unselectedLabelStyle: AppFonts.labelStyle,
+            selectedLabelStyle: AppFonts.labelStyle,
+            selectedItemColor: Pallete.actionColor,
+            unselectedItemColor: Pallete.actionColor,
+            onTap: (index) => _baseController.onTapInEditAlarmsMode(
+                context, index, alarmViewState),
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.arrow_back,
+                  size: 24,
+                ),
+                label: 'Go back',
               ),
-              gradient: theme == AppTheme.lightThemeName
-                  ? PalleteLight.backgroundGradient
-                  : null,
-            ),
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(30.0),
-                topRight: Radius.circular(30.0),
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.alarm_rounded,
+                  size: 24,
+                ),
+                label: 'Switch on/off',
               ),
-              child: BottomNavigationBar(
-                showSelectedLabels: true,
-                showUnselectedLabels: true,
-                enableFeedback: false,
-                unselectedLabelStyle: AppFonts.labelStyle,
-                selectedLabelStyle: AppFonts.labelStyle,
-                selectedItemColor: Pallete.actionColor,
-                unselectedItemColor: Pallete.actionColor,
-                onTap: (index) => _baseController.onTapInEditAlarmsMode(
-                    context, index, alarmViewState),
-                items: const [
-                  BottomNavigationBarItem(
-                    icon: Icon(
-                      Icons.arrow_back,
-                      size: 24,
-                    ),
-                    label: 'Go back',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(
-                      Icons.alarm_rounded,
-                      size: 24,
-                    ),
-                    label: 'Switch on/off',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(
-                      Icons.delete_outline_rounded,
-                      size: 24,
-                    ),
-                    label: 'Delete',
-                  ),
-                ],
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.delete_outline_rounded,
+                  size: 24,
+                ),
+                label: 'Delete',
               ),
-            ),
-          );
-        },
+            ],
+          ),
+        ),
       );
     } else if (habitViewState.isEditMode) {
-      return ValueListenableBuilder(
-        valueListenable: Hive.box(DatabaseHelper.settingsBox).listenable(),
-        builder: (context, box, _) {
-          final String theme =
-              box.get('theme', defaultValue: AppTheme.defaultTheme);
-          return Container(
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(30.0),
-                topRight: Radius.circular(30.0),
+      return Container(
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30.0),
+            topRight: Radius.circular(30.0),
+          ),
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(30.0),
+            topRight: Radius.circular(30.0),
+          ),
+          child: BottomNavigationBar(
+            showSelectedLabels: true,
+            showUnselectedLabels: true,
+            enableFeedback: false,
+            unselectedLabelStyle: AppFonts.labelStyle,
+            selectedLabelStyle: AppFonts.labelStyle,
+            selectedItemColor: Pallete.actionColor,
+            unselectedItemColor: Pallete.actionColor,
+            onTap: (index) => _baseController.onTapInEditHabitsMode(
+                context, index, habitViewState),
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.arrow_back,
+                  size: 24,
+                ),
+                label: 'Go back',
               ),
-              gradient: theme == AppTheme.lightThemeName
-                  ? PalleteLight.backgroundGradient
-                  : null,
-            ),
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(30.0),
-                topRight: Radius.circular(30.0),
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.notifications,
+                  size: 24,
+                ),
+                label: 'Switch on/off',
               ),
-              child: BottomNavigationBar(
-                showSelectedLabels: true,
-                showUnselectedLabels: true,
-                enableFeedback: false,
-                unselectedLabelStyle: AppFonts.labelStyle,
-                selectedLabelStyle: AppFonts.labelStyle,
-                selectedItemColor: Pallete.actionColor,
-                unselectedItemColor: Pallete.actionColor,
-                onTap: (index) => _baseController.onTapInEditHabitsMode(
-                    context, index, habitViewState),
-                items: const [
-                  BottomNavigationBarItem(
-                    icon: Icon(
-                      Icons.arrow_back,
-                      size: 24,
-                    ),
-                    label: 'Go back',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(
-                      Icons.notifications,
-                      size: 24,
-                    ),
-                    label: 'Switch on/off',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(
-                      Icons.delete_outline_rounded,
-                      size: 24,
-                    ),
-                    label: 'Delete',
-                  ),
-                ],
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.delete_outline_rounded,
+                  size: 24,
+                ),
+                label: 'Delete',
               ),
-            ),
-          );
-        },
+            ],
+          ),
+        ),
       );
     } else {
-      return ValueListenableBuilder(
-        valueListenable: Hive.box(DatabaseHelper.settingsBox).listenable(),
-        builder: (context, box, _) {
-          final String theme =
-              box.get('theme', defaultValue: AppTheme.defaultTheme);
-          return Container(
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(30.0),
-                topRight: Radius.circular(30.0),
-              ),
-              gradient: theme == AppTheme.lightThemeName
-                  ? PalleteLight.backgroundGradient
-                  : null,
+      return Container(
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30.0),
+            topRight: Radius.circular(30.0),
+          ),
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(30.0),
+            topRight: Radius.circular(30.0),
+          ),
+          child: BottomNavigationBar(
+            onTap: (page) => _baseController.onPageChange(
+              context,
+              page: page,
+              currentPage: currentPage,
             ),
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(30.0),
-                topRight: Radius.circular(30.0),
-              ),
-              child: BottomNavigationBar(
-                onTap: (page) => _baseController.onPageChange(
-                  context,
-                  page: page,
-                  currentPage: currentPage,
-                ),
-                currentIndex: currentPage,
-                items: UIUtils.bottomBarItems,
-              ),
-            ),
-          );
-        },
+            currentIndex: currentPage,
+            items: UIUtils.bottomBarItems,
+          ),
+        ),
       );
     }
   }
-  // if (alarmViewState.isEditMode) {
-  //     return BottomNavigationBar(
-  //       showSelectedLabels: true,
-  //       showUnselectedLabels: true,
-  //       enableFeedback: false,
-  //       unselectedLabelStyle: AppFonts.labelStyle,
-  //       selectedLabelStyle: AppFonts.labelStyle,
-  //       selectedItemColor: Pallete.actionColor,
-  //       unselectedItemColor: Pallete.actionColor,
-  //       onTap: (index) => _baseController.onTapInEditAlarmsMode(
-  //           context, index, alarmViewState),
-  //       items: const [
-  //         BottomNavigationBarItem(
-  //           icon: Icon(
-  //             Icons.arrow_back,
-  //             size: 24,
-  //           ),
-  //           label: 'Go back',
-  //         ),
-  //         BottomNavigationBarItem(
-  //           icon: Icon(
-  //             Icons.alarm_rounded,
-  //             size: 24,
-  //           ),
-  //           label: 'Switch on/off',
-  //         ),
-  //         BottomNavigationBarItem(
-  //           icon: Icon(
-  //             Icons.delete_outline_rounded,
-  //             size: 24,
-  //           ),
-  //           label: 'Delete',
-  //         ),
-  //       ],
-  //     );
-  //   } else if (habitViewState.isEditMode) {
-  //     return BottomNavigationBar(
-  //       showSelectedLabels: true,
-  //       showUnselectedLabels: true,
-  //       enableFeedback: false,
-  //       unselectedLabelStyle: AppFonts.labelStyle,
-  //       selectedLabelStyle: AppFonts.labelStyle,
-  //       selectedItemColor: Pallete.actionColor,
-  //       unselectedItemColor: Pallete.actionColor,
-  //       onTap: (index) => _baseController.onTapInEditHabitsMode(
-  //           context, index, habitViewState),
-  //       items: const [
-  //         BottomNavigationBarItem(
-  //           icon: Icon(
-  //             Icons.arrow_back,
-  //             size: 24,
-  //           ),
-  //           label: 'Go back',
-  //         ),
-  //         BottomNavigationBarItem(
-  //           icon: Icon(
-  //             Icons.notifications,
-  //             size: 24,
-  //           ),
-  //           label: 'Switch on/off',
-  //         ),
-  //         BottomNavigationBarItem(
-  //           icon: Icon(
-  //             Icons.delete_outline_rounded,
-  //             size: 24,
-  //           ),
-  //           label: 'Delete',
-  //         ),
-  //       ],
-  //     );
-  //   } else {
-  //     return BottomNavigationBar(
-  //       onTap: (page) => _baseController.onPageChange(
-  //         context,
-  //         page: page,
-  //         currentPage: currentPage,
-  //       ),
-  //       currentIndex: currentPage,
-  //       items: UIUtils.bottomBarItems,
-  //     );
-  //   }
-  // }
 }

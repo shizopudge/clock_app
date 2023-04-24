@@ -5,18 +5,20 @@ class TimeWheel extends StatelessWidget {
   final List<Widget> children;
   final FixedExtentScrollController scrollController;
   final Function(int) onChanged;
+  final bool isFromTimer;
   const TimeWheel({
     super.key,
     required this.currentTime,
     required this.children,
     required this.scrollController,
     required this.onChanged,
+    required this.isFromTimer,
   });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 150,
+      width: isFromTimer ? 80 : 150,
       child: ListWheelScrollView.useDelegate(
         onSelectedItemChanged: onChanged,
         controller: scrollController,

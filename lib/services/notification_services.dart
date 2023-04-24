@@ -1,7 +1,9 @@
+import 'package:alarm_app/services/alarm_services.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 
 import '../repositories/alarms_repository.dart';
+import '../storage/database.dart';
 
 class NotificationServices {
   static final NotificationServices _notificationServices =
@@ -54,6 +56,17 @@ class NotificationServices {
           enableVibration: true,
           playSound: true,
         ),
+        NotificationChannel(
+          channelGroupKey: 'service_notifications_channel_group',
+          channelKey: 'service_notifications_channel',
+          channelName: 'Service notifications',
+          channelDescription: 'Service notification channel',
+          defaultColor: Colors.white,
+          ledColor: Colors.white,
+          importance: NotificationImportance.Default,
+          enableVibration: false,
+          playSound: false,
+        ),
       ],
       channelGroups: [
         NotificationChannelGroup(
@@ -67,6 +80,10 @@ class NotificationServices {
         NotificationChannelGroup(
           channelGroupName: 'Habit notifications group',
           channelGroupKey: 'habit_notifications_channel_group',
+        ),
+        NotificationChannelGroup(
+          channelGroupName: 'Service notifications group',
+          channelGroupKey: 'service_notifications_channel_group',
         ),
       ],
       debug: true,
@@ -210,19 +227,33 @@ class NotificationServices {
   static Future<void> onActionReceivedMethod(
       ReceivedNotification action) async {
     final payload = action.payload ?? {};
-    final String alarmId = payload['alarmId'] ?? '';
-    final String alarmNotificationId = payload['alarmNotificationId'] ?? '';
-    if (payload['action'] == 'Stop alarm') {
-      debugPrint('STOP!');
+    if (action.channelKey == 'alarm_notifications_channel') {
+      if (payload['action'] == 'Stop alarm') {
+        await DatabaseHelper.initDatabase();
+        final String alarmId = payload['alarmId'] ?? '';
+        final String preAlarmNotificationId =
+            payload['preAlarmNotificationId'] ?? '';
+        final bool isRepeatingAlarm =
+            AlarmsRepository().checkIsRepeatingAlarm(alarmId) ?? false;
+        if (!isRepeatingAlarm) {
+          await AlarmsRepository().disableAlarm(alarmId);
+        }
+        await AlarmServices()
+            .dismissPreAlarmNotification(preAlarmNotificationId);
+        debugPrint('STOP ALARM!');
+      }
     }
-    if (payload['action'] == 'Switch off') {
-      await AwesomeNotifications()
-          .cancelSchedule(int.parse(alarmNotificationId));
+    if (payload['action'] == 'Switch off' &&
+        action.channelKey == 'pre_alarm_notifications_channel') {
+      await DatabaseHelper.initDatabase();
+      final String alarmId = payload['alarmId'] ?? '';
+      final String alarmNotificationId = payload['alarmNotificationId'] ?? '';
       final bool isRepeatingAlarm =
           AlarmsRepository().checkIsRepeatingAlarm(alarmId) ?? false;
       if (!isRepeatingAlarm) {
-        await AlarmsRepository().enableAlarm(alarmId);
+        await AlarmsRepository().disableAlarm(alarmId);
       }
+      await AlarmServices().cancelAlarmNotification(alarmNotificationId);
       debugPrint('SWITCH OFF!');
     }
   }
@@ -234,19 +265,18 @@ class NotificationServices {
   @pragma('vm:entry-point')
   static Future<void> onNotificationDisplayedMethod(
       ReceivedNotification action) async {
-    final payload = action.payload ?? {};
-    final String alarmId = payload['alarmId'] ?? '';
-    final String preAlarmNotificationIdString =
-        payload['preAlarmNotificationId'] ?? '';
     if (action.channelKey == 'alarm_notifications_channel') {
-      final int preAlarmNotificationId =
-          int.parse(preAlarmNotificationIdString);
-      await AwesomeNotifications().dismiss(preAlarmNotificationId);
+      await DatabaseHelper.initDatabase();
+      final payload = action.payload ?? {};
+      final String alarmId = payload['alarmId'] ?? '';
+      final String preAlarmNotificationId =
+          payload['preAlarmNotificationId'] ?? '';
       final bool isRepeatingAlarm =
           AlarmsRepository().checkIsRepeatingAlarm(alarmId) ?? false;
       if (!isRepeatingAlarm) {
-        await AlarmsRepository().enableAlarm(alarmId);
+        await AlarmsRepository().disableAlarm(alarmId);
       }
+      await AlarmServices().dismissPreAlarmNotification(preAlarmNotificationId);
     }
     debugPrint('NOTIFICATION DISPLAYED!');
   }

@@ -99,9 +99,7 @@ class _AddEditAlarmViewState extends State<AddEditAlarmView> {
                     .onMinuteChanged(context, minute),
               ),
             ),
-            const AlarmSchedule(
-              isAlarm: true,
-            ),
+            const AlarmSchedule(),
             AddEditSettings(
               onSave: () => widget._addEditAlarmController.onSave(
                 context,

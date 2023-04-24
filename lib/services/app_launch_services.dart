@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '../core/utils.dart';
 
-import '../models/alarm/alarm.dart';
-import '../repositories/alarms_repository.dart';
+import '../models/habit/habit.dart';
+import '../repositories/habits_repository.dart';
 import '../storage/database.dart';
 import 'alarm_services.dart';
+import 'notification_services.dart';
 
 class AppLaunchServices {
   static final AppLaunchServices _appLaunchServices =
@@ -18,7 +20,13 @@ class AppLaunchServices {
 
   AppLaunchServices._internal();
 
-  static Future<void> onAppLaunch() async {
+  Future<void> onAppLaunch() async {
+    await DatabaseHelper.initDatabase();
+    await NotificationServices.initializeNotifications();
+    await _onAppStartWork();
+  }
+
+  Future<void> _onAppStartWork() async {
     final bool isSettingsBoxOpened = Hive.isBoxOpen(DatabaseHelper.settingsBox);
     final bool isAlarmsBoxOpened = Hive.isBoxOpen(DatabaseHelper.alarmsBox);
     late final bool isFirstLaunch;
@@ -32,16 +40,20 @@ class AppLaunchServices {
       isFirstLaunch = settingsBox.get('isFirstLaunch', defaultValue: true);
     }
     if (isAlarmsBoxOpened && !isFirstLaunch) {
-      final List<Alarm> launchedAlarms = AlarmsRepository().getEnabledAlarms();
-      await AlarmServices()
-          .scheduleAlarms(
-            launchedAlarms,
-            isFromWorkmanager: true,
-          )
-          .whenComplete(
+      final List<Habit> enabledHabits = HabitsRepository().getEnabledHabits();
+      await AlarmServices().scheduleAlarms().whenComplete(
             () => debugPrint(
                 'Alarms scheduling on app start is success! ${DateTime.now()}'),
           );
+      await AlarmServices()
+          .scheduleHabits(
+            enabledHabits,
+          )
+          .whenComplete(
+            () => debugPrint(
+                'Habits scheduling on app start is success! ${DateTime.now()}'),
+          );
     }
+    FlutterNativeSplash.remove();
   }
 }

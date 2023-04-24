@@ -6,8 +6,7 @@ import '../../core/utils.dart';
 import '../../theme/fonts.dart';
 
 class AlarmSchedule extends StatelessWidget {
-  final bool isAlarm;
-  const AlarmSchedule({super.key, required this.isAlarm});
+  const AlarmSchedule({super.key});
 
   @override
   Widget build(BuildContext context) {

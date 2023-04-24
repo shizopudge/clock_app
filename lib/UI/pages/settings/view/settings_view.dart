@@ -72,6 +72,14 @@ class SettingsView extends StatelessWidget {
                   ? Icons.dark_mode_rounded
                   : Icons.light_mode_rounded,
             ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Text(
+                'Clock\nVersion: 1.0.0',
+                textAlign: TextAlign.center,
+                style: AppFonts.titleStyle.copyWith(color: Colors.grey),
+              ),
+            ),
           ],
         ),
       ),

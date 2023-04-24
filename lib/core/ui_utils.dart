@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../UI/common/weekdays.dart';
 import '../UI/pages/alarm/view/alarm_view.dart';
-import '../UI/pages/habits/view/habit_view.dart';
+import '../UI/pages/habit/view/habit_view.dart';
+import '../UI/pages/timer/view/timer_view.dart';
 import '../theme/fonts.dart';
 import '../theme/pallete.dart';
 import '../constants/core_constants.dart';
+import 'utils.dart';
 
 class UIUtils {
   static final alarmsNestedScrollViewKey = GlobalKey<NestedScrollViewState>();
@@ -19,50 +21,9 @@ class UIUtils {
     HabitView(
       habitController: CoreConstants.habitController,
     ),
-    const SizedBox(),
-  ];
-
-  static const List<String> daysList = [
-    'Mon',
-    'Tue',
-    'Wed',
-    'Thu',
-    'Fri',
-    'Sat',
-    'Sun'
-  ];
-
-  static const List<Map<int, String>> intervals = [
-    {
-      900: 'min',
-    },
-    {
-      1800: 'min',
-    },
-    {
-      3600: 'hour',
-    },
-    {
-      7200: 'hour',
-    },
-    {
-      10800: 'hour',
-    },
-    {
-      14400: 'hour',
-    },
-    {
-      18000: 'hour',
-    },
-    {
-      21600: 'hour',
-    },
-    {
-      43200: 'hour',
-    },
-    {
-      86400: 'day',
-    },
+    TimerView(
+      timerController: CoreConstants.timerController,
+    ),
   ];
 
   static List<Widget> daysOfTheWeek({required bool isAlarm}) => List.generate(
@@ -101,9 +62,9 @@ class UIUtils {
   ];
 
   static List<Widget> launchedDays(List<String> days) => List.generate(
-        daysList.length,
+        AppUtils.daysList.length,
         (index) {
-          final String day = daysList[index];
+          final String day = AppUtils.daysList[index];
           if (days.contains(day)) {
             return Padding(
               padding: const EdgeInsets.all(2.0),
@@ -189,7 +150,7 @@ class UIUtils {
           day: 'Sat',
           dayLetter: 'S',
           style: AppFonts.labelStyle.copyWith(
-            color: Colors.blueGrey,
+            color: Colors.blue.shade900,
             fontWeight: FontWeight.bold,
           ),
         );

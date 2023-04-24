@@ -40,6 +40,7 @@ class AlarmPicker extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TimeWheel(
+                isFromTimer: false,
                 onChanged: onHourChanged,
                 currentTime: currentHour,
                 scrollController: hourController,
@@ -59,6 +60,7 @@ class AlarmPicker extends StatelessWidget {
               ),
               const Dots(),
               TimeWheel(
+                isFromTimer: false,
                 onChanged: onMinuteChanged,
                 currentTime: currentMinute,
                 scrollController: minuteController,

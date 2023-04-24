@@ -36,6 +36,7 @@ class AppTheme {
     iconTheme: const IconThemeData(
       color: Pallete.actionColor,
     ),
+    cardColor: PalleteLight.primaryColor,
     snackBarTheme: SnackBarThemeData(
       backgroundColor: Pallete.actionColor,
       contentTextStyle: AppFonts.labelStyle,
@@ -54,7 +55,7 @@ class AppTheme {
       ),
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
-      backgroundColor: Colors.transparent,
+      backgroundColor: PalleteLight.primaryColor,
       type: BottomNavigationBarType.fixed,
       showSelectedLabels: true,
       showUnselectedLabels: false,

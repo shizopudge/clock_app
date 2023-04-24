@@ -1,4 +1,3 @@
-import 'package:alarm_app/UI/common/habit_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -9,6 +8,7 @@ import '../../../../core/enums.dart';
 import '../../../../models/habit/habit.dart';
 import '../../../../storage/database.dart';
 import '../../../../theme/fonts.dart';
+import '../../../common/habit_card.dart';
 import '../controller/habit_controller.dart';
 import '../widgets/habit_appbar.dart';
 

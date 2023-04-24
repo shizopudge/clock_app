@@ -3,12 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../bloc/alarm_view/alarm_view_cubit.dart';
 import '../../../bloc/habit_view/habit_view_cubit.dart';
+import '../../../core/router.dart';
 import '../../../core/ui_utils.dart';
+import '../../../theme/fonts.dart';
 import '../../../theme/pallete.dart';
 import '../../../theme/theme.dart';
 import '../../common/bottom_nav_bar.dart';
 import '../../pages/alarm/widgets/alarm_appbar.dart';
-import '../../pages/habits/widgets/habit_appbar.dart';
+import '../../pages/habit/widgets/habit_appbar.dart';
 import '../controller/base_controller.dart';
 
 class PageCubit extends Cubit<int> {
@@ -38,6 +40,25 @@ class Base extends StatelessWidget {
     return WillPopScope(
       onWillPop: () => _baseController.onWillPop(context),
       child: Scaffold(
+        appBar: currentPage == 2
+            ? AppBar(
+                title: Text(
+                  'Timer',
+                  style: AppFonts.titleStyle,
+                ),
+                elevation: 0,
+                backgroundColor: Colors.transparent,
+                actions: [
+                  IconButton(
+                    onPressed: () => AppRouter.navigateWithSlideTransition(
+                        context, AppRouter.settingsPage),
+                    icon: const Icon(
+                      Icons.settings,
+                    ),
+                  )
+                ],
+              )
+            : null,
         body: Container(
           decoration: BoxDecoration(
             gradient: theme == AppTheme.lightThemeName

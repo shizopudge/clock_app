@@ -21,15 +21,29 @@ class DatabaseHelper {
   static const String habitsBox = 'habits';
   static const String settingsBox = 'settings';
 
-  @pragma('vm:entry-point')
   static Future<void> initDatabase() async {
     final Directory directory =
         await path_provider.getApplicationDocumentsDirectory();
     await Hive.initFlutter(directory.path);
-    Hive.registerAdapter(AlarmAdapter());
-    Hive.registerAdapter(HabitAdapter());
-    await Hive.openBox<Alarm>(alarmsBox);
-    await Hive.openBox<Habit>(habitsBox);
-    await Hive.openBox(settingsBox);
+    final isAlarmAdapterRegistered = Hive.isAdapterRegistered(0);
+    final isHabitAdapterRegistered = Hive.isAdapterRegistered(1);
+    final isAlarmsBoxIsOpened = Hive.isBoxOpen(alarmsBox);
+    final isHabitsBoxIsOpened = Hive.isBoxOpen(habitsBox);
+    final isSettingsBoxIsOpened = Hive.isBoxOpen(settingsBox);
+    if (!isAlarmAdapterRegistered) {
+      Hive.registerAdapter(AlarmAdapter());
+    }
+    if (!isHabitAdapterRegistered) {
+      Hive.registerAdapter(HabitAdapter());
+    }
+    if (!isAlarmsBoxIsOpened) {
+      await Hive.openBox<Alarm>(alarmsBox);
+    }
+    if (!isHabitsBoxIsOpened) {
+      await Hive.openBox<Habit>(habitsBox);
+    }
+    if (!isSettingsBoxIsOpened) {
+      await Hive.openBox(settingsBox);
+    }
   }
 }

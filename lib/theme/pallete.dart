@@ -1,10 +1,26 @@
 import 'package:flutter/material.dart';
 
 class Pallete {
+  static final Pallete _pallete = Pallete._internal();
+
+  factory Pallete() {
+    return _pallete;
+  }
+
+  Pallete._internal();
+
   static const Color actionColor = Color.fromRGBO(67, 180, 241, 1);
 }
 
 class PalleteLight {
+  static final PalleteLight _palleteLight = PalleteLight._internal();
+
+  factory PalleteLight() {
+    return _palleteLight;
+  }
+
+  PalleteLight._internal();
+
   static const LinearGradient backgroundGradient = LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
@@ -14,19 +30,20 @@ class PalleteLight {
         Color.fromRGBO(11, 135, 147, 1.0),
       ]);
 
-  static const LinearGradient alarmCardBg = LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      transform: GradientRotation(16),
-      colors: [
-        Color.fromRGBO(58, 97, 134, 1.0),
-        Color.fromRGBO(137, 37, 62, 1.0),
-      ]);
+  static const primaryColor = Colors.white30;
 
   static const Color backgroundColor = Color.fromARGB(136, 64, 133, 179);
 }
 
 class PalleteDark {
+  static final PalleteDark _palleteDark = PalleteDark._internal();
+
+  factory PalleteDark() {
+    return _palleteDark;
+  }
+
+  PalleteDark._internal();
+
   static final Color backgroundColor = Colors.grey.shade900;
 
   static const Color cardColor = Colors.black38;
