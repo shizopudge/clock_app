@@ -72,6 +72,8 @@ class AppUtils {
     );
   }
 
+  static String getFormatDateTimeNow() => _timeFormat.format(DateTime.now());
+
   static String formatSecondsBeforeNextAlarm(int secondsBeforeNextAlarm) {
     late final int hours;
     late final int minutes;
@@ -144,16 +146,6 @@ class AppUtils {
       default:
         return '?';
     }
-  }
-
-  static DateTime convertNotificationScheduleToDateTime(
-      Map<String, dynamic>? schedule) {
-    return DateTime(
-        schedule?['year'] as int,
-        schedule?['month'] as int,
-        schedule?['day'] as int,
-        schedule?['hour'] as int,
-        schedule?['minute'] as int);
   }
 
   static String formatInterval(int interval) {

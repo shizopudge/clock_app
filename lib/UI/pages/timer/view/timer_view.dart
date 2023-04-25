@@ -9,7 +9,7 @@ import '../../../../core/enums.dart';
 import '../../../../core/utils.dart';
 import '../../../../theme/fonts.dart';
 import '../../../../theme/pallete.dart';
-import '../../../common/action_button.dart';
+import '../../../common/circle_button.dart';
 import '../controller/timer_controller.dart';
 import '../widgets/timer_picker.dart';
 
@@ -160,10 +160,11 @@ class _TimerViewState extends State<TimerView> {
             if (timerState.status == TimerStatus.stopped)
               Padding(
                 padding: const EdgeInsets.all(15.0),
-                child: ActionButton(
+                child: CircleButton(
                   onTap: () => widget._timerController
                       .startTimer(context, totalSeconds, valueNotifier),
                   text: 'Start',
+                  padding: 32,
                 ),
               ),
             if (timerState.status == TimerStatus.paused)
@@ -172,15 +173,16 @@ class _TimerViewState extends State<TimerView> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(15.0),
-                    child: ActionButton(
+                    child: CircleButton(
                       onTap: () => widget._timerController
                           .resumeTimer(context, valueNotifier),
                       text: 'Resume',
+                      padding: 32,
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(15.0),
-                    child: ActionButton(
+                    child: CircleButton(
                       onTap: () {
                         widget._timerController
                             .stopAlarm(context, valueNotifier, _player);
@@ -188,6 +190,7 @@ class _TimerViewState extends State<TimerView> {
                       },
                       text: 'Cancel',
                       color: Colors.red,
+                      padding: 32,
                     ),
                   ),
                 ],
@@ -198,15 +201,16 @@ class _TimerViewState extends State<TimerView> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(15.0),
-                    child: ActionButton(
+                    child: CircleButton(
                       onTap: () => widget._timerController
                           .pauseTimer(context, valueNotifier),
                       text: 'Pause',
+                      padding: 32,
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(15.0),
-                    child: ActionButton(
+                    child: CircleButton(
                       onTap: () {
                         widget._timerController
                             .stopAlarm(context, valueNotifier, _player);
@@ -214,6 +218,7 @@ class _TimerViewState extends State<TimerView> {
                       },
                       text: 'Cancel',
                       color: Colors.red,
+                      padding: 32,
                     ),
                   ),
                 ],
@@ -221,12 +226,13 @@ class _TimerViewState extends State<TimerView> {
             if (timerState.status == TimerStatus.alarm)
               Padding(
                 padding: const EdgeInsets.all(15.0),
-                child: ActionButton(
+                child: CircleButton(
                   onTap: () {
                     widget._timerController
                         .stopAlarm(context, valueNotifier, _player);
                     widget._timerController.reset(context);
                   },
+                  padding: 32,
                   text: 'Stop',
                   color: Colors.red,
                 ),

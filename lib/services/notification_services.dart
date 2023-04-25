@@ -1,9 +1,11 @@
-import 'package:alarm_app/services/alarm_services.dart';
+import 'package:app_launcher/app_launcher.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
+import 'package:is_lock_screen/is_lock_screen.dart';
 
 import '../repositories/alarms_repository.dart';
 import '../storage/database.dart';
+import 'alarm_services.dart';
 
 class NotificationServices {
   static final NotificationServices _notificationServices =
@@ -240,6 +242,16 @@ class NotificationServices {
         }
         await AlarmServices()
             .dismissPreAlarmNotification(preAlarmNotificationId);
+        bool? result = await isLockScreen();
+        debugPrint('Is lock screen: $result');
+        if (result != null) {
+          if (result) {
+            await AlarmServices().onAlarmFromLockScreen();
+            await AppLauncher.openApp(
+              androidApplicationId: 'com.example.alarm',
+            );
+          }
+        }
         debugPrint('STOP ALARM!');
       }
     }
@@ -259,27 +271,27 @@ class NotificationServices {
   }
 
   @pragma('vm:entry-point')
-  static Future<void> onNotificationCreatedMethod(
-      ReceivedNotification action) async {}
-
-  @pragma('vm:entry-point')
   static Future<void> onNotificationDisplayedMethod(
       ReceivedNotification action) async {
-    if (action.channelKey == 'alarm_notifications_channel') {
-      await DatabaseHelper.initDatabase();
-      final payload = action.payload ?? {};
-      final String alarmId = payload['alarmId'] ?? '';
-      final String preAlarmNotificationId =
-          payload['preAlarmNotificationId'] ?? '';
-      final bool isRepeatingAlarm =
-          AlarmsRepository().checkIsRepeatingAlarm(alarmId) ?? false;
-      if (!isRepeatingAlarm) {
-        await AlarmsRepository().disableAlarm(alarmId);
-      }
-      await AlarmServices().dismissPreAlarmNotification(preAlarmNotificationId);
-    }
+    //? if (action.channelKey == 'alarm_notifications_channel') {
+    //   await DatabaseHelper.initDatabase();
+    //   final payload = action.payload ?? {};
+    //   final String alarmId = payload['alarmId'] ?? '';
+    //   final String preAlarmNotificationId =
+    //       payload['preAlarmNotificationId'] ?? '';
+    //   final bool isRepeatingAlarm =
+    //       AlarmsRepository().checkIsRepeatingAlarm(alarmId) ?? false;
+    //   if (!isRepeatingAlarm) {
+    //     await AlarmsRepository().disableAlarm(alarmId);
+    //   }
+    //   await AlarmServices().dismissPreAlarmNotification(preAlarmNotificationId);
+    // }
     debugPrint('NOTIFICATION DISPLAYED!');
   }
+
+  @pragma('vm:entry-point')
+  static Future<void> onNotificationCreatedMethod(
+      ReceivedNotification action) async {}
 
   @pragma('vm:entry-point')
   static Future<void> onDismissActionReceivedMethod(

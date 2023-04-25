@@ -21,12 +21,15 @@ dependencies:
   path_provider: ^2.0.14
   uuid: ^3.0.7
   flutter_timezone: ^1.0.4
-  awesome_notifications: ^0.7.4
   rate_limiter: ^1.0.0
   background_fetch: ^1.1.5
   simple_circular_progress_bar: ^1.0.2
   just_audio: ^0.9.32
   flutter_native_splash: ^2.2.19
+  awesome_notifications: ^0.7.4+1
+  app_launcher: ^1.0.0
+  is_lock_screen: ^2.0.0
+  slide_action: ^0.0.2
 
 dev_dependencies:
   flutter_test:

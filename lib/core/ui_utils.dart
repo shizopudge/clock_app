@@ -14,6 +14,9 @@ class UIUtils {
 
   static final habitsNestedScrollViewKey = GlobalKey<NestedScrollViewState>();
 
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
+
   static final pages = [
     AlarmView(
       alarmController: CoreConstants.alarmController,

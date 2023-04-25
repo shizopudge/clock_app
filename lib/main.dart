@@ -1,16 +1,19 @@
 import 'dart:async';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:background_fetch/background_fetch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+
 import 'UI/base/controller/base_controller.dart';
 import 'UI/base/view/base.dart';
 import 'UI/pages/welcome/controller/welcome_controller.dart';
 import 'UI/pages/welcome/view/welcome_view.dart';
 import 'core/providers.dart';
+import 'core/router.dart';
+import 'core/ui_utils.dart';
 import 'models/habit/habit.dart';
 import 'repositories/alarms_repository.dart';
 import 'repositories/habits_repository.dart';
@@ -97,12 +100,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  @override
-  void initState() {
-    super.initState();
-    initBackgroundServices();
-  }
-
   Future<void> initBackgroundServices() async {
     await BackgroundFetch.configure(
         BackgroundFetchConfig(
@@ -125,6 +122,12 @@ class _MyAppState extends State<MyApp> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    initBackgroundServices();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
@@ -139,18 +142,21 @@ class _MyAppState extends State<MyApp> {
               settingsBox.get('theme', defaultValue: AppTheme.defaultTheme);
           return MaterialApp(
             debugShowCheckedModeBanner: false,
+            navigatorKey: UIUtils.navigatorKey,
             theme: AppTheme.getCurrentTheme(settingsBox),
             home: settingsBox.get('isFirstLaunch', defaultValue: true)
                 ? WelcomeView(
                     welcomeController: WelcomeController(),
                   )
-                : Base(
-                    baseController: BaseController(
-                      alarmsRepository: AlarmsRepository(),
-                      habitsRepository: HabitsRepository(),
-                    ),
-                    theme: theme,
-                  ),
+                : settingsBox.get('isFromAlarm', defaultValue: false)
+                    ? AppRouter.alarmPageView
+                    : Base(
+                        baseController: BaseController(
+                          alarmsRepository: AlarmsRepository(),
+                          habitsRepository: HabitsRepository(),
+                        ),
+                        theme: theme,
+                      ),
           );
         },
       ),

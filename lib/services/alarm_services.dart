@@ -3,12 +3,14 @@ import 'dart:math';
 import 'package:awesome_notifications/awesome_notifications.dart';
 
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import '../core/utils.dart';
 
 import '../models/alarm/alarm.dart';
 import '../models/habit/habit.dart';
 import '../repositories/alarms_repository.dart';
+import '../storage/database.dart';
 import 'notification_services.dart';
 
 abstract class IAlarmServices {
@@ -37,6 +39,8 @@ abstract class IAlarmServices {
       required Alarm alarm,
       required int alarmNotificationId,
       required int preAlarmNotificationId});
+
+  Future<void> onAlarmFromLockScreen();
 }
 
 class AlarmServices extends IAlarmServices {
@@ -266,6 +270,7 @@ class AlarmServices extends IAlarmServices {
         'preAlarmNotificationId': preAlarmNotificationId.toString(),
         'alarmId': alarm.id,
       },
+      fullScreenIntent: true,
       criticalAlert: true,
       showWhen: false,
       scheduled: true,
@@ -307,5 +312,18 @@ class AlarmServices extends IAlarmServices {
       actionType: ActionType.SilentAction,
       notificationCategory: NotificationCategory.Event,
     );
+  }
+
+  @override
+  Future<void> onAlarmFromLockScreen() async {
+    final isBoxOpened = Hive.isBoxOpen(DatabaseHelper.settingsBox);
+    if (!isBoxOpened) {
+      await Hive.openBox(DatabaseHelper.settingsBox);
+      final settingsBox = Hive.box(DatabaseHelper.settingsBox);
+      await settingsBox.put('isFromAlarm', true);
+    } else {
+      final settingsBox = Hive.box(DatabaseHelper.settingsBox);
+      await settingsBox.put('isFromAlarm', true);
+    }
   }
 }

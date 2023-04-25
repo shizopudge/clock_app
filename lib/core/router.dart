@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../UI/pages/add_edit_alarm/view/add_edit_alarm_view.dart';
 import '../UI/pages/add_edit_habit/view/add_edit_habit_view.dart';
+import '../UI/pages/alarm_page/view/alarm_page_view.dart';
 import '../UI/pages/settings/view/settings_view.dart';
 import '../constants/core_constants.dart';
 
@@ -37,6 +38,8 @@ class AppRouter {
     isAddHabit: false,
     addEditHabitController: CoreConstants.addEditHabitController,
   );
+  static final Widget alarmPageView =
+      AlarmPageView(alarmPageController: CoreConstants.alarmPageController);
 
   static void navigateWithSlideTransition(BuildContext context, Widget page) =>
       Navigator.of(context).push(

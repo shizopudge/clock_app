@@ -4,6 +4,7 @@ import '../UI/base/view/base.dart';
 import '../UI/common/clock.dart';
 import '../UI/pages/add_edit_habit/widgets/interval_picker.dart';
 import '../UI/pages/alarm/widgets/alarm_appbar.dart';
+import '../UI/pages/alarm_page/view/alarm_page_view.dart';
 import '../UI/pages/habit/widgets/habit_appbar.dart';
 import '../bloc/add_edit_alarm/add_edit_alarm_cubit.dart';
 import '../bloc/add_edit_habit/add_edit_habit_cubit.dart';
@@ -30,6 +31,9 @@ class AppProviders {
     ),
     BlocProvider(
       create: (_) => IntervalPickerCubit(),
+    ),
+    BlocProvider(
+      create: (_) => AlarmPageViewCubit(),
     ),
   ];
 
