@@ -60,7 +60,7 @@ class HabitController extends IHabitController {
 
   @override
   void onScroll(BuildContext context, ScrollController scrollController) {
-    if (scrollController.offset > 55) {
+    if (scrollController.offset > 200) {
       context.read<HabitAppBarCubit>().collapse();
     } else {
       context.read<HabitAppBarCubit>().expand();

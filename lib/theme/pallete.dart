@@ -30,7 +30,7 @@ class PalleteLight {
         Color.fromRGBO(11, 135, 147, 1.0),
       ]);
 
-  static const primaryColor = Colors.white30;
+  static const primaryColor = Colors.white10;
 
   static const Color backgroundColor = Color.fromARGB(136, 64, 133, 179);
 }

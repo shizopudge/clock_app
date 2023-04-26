@@ -23,13 +23,13 @@ class CircleButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         shape: const CircleBorder(),
         backgroundColor: color ?? Pallete.actionColor,
-        padding: EdgeInsets.all(padding),
+        padding: const EdgeInsets.all(4.0),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(4.0),
+        padding: EdgeInsets.all(padding),
         child: Text(
           text,
-          style: AppFonts.headerStyle.copyWith(
+          style: AppFonts.titleStyle.copyWith(
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),

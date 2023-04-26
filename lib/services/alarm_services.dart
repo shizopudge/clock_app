@@ -184,7 +184,7 @@ class AlarmServices extends IAlarmServices {
   Future<void> dismissPreAlarmNotification(
       String preAlarmNotificationId) async {
     final int id = int.parse(preAlarmNotificationId);
-    await AwesomeNotifications().dismiss(id);
+    await AwesomeNotifications().cancel(id);
   }
 
   @override

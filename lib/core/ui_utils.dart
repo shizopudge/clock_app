@@ -40,25 +40,16 @@ class UIUtils {
       icon: Icon(
         Icons.alarm,
       ),
-      activeIcon: Icon(
-        Icons.alarm,
-      ),
     ),
     BottomNavigationBarItem(
       label: 'Habits',
       icon: Icon(
         Icons.update_rounded,
       ),
-      activeIcon: Icon(
-        Icons.update_rounded,
-      ),
     ),
     BottomNavigationBarItem(
       label: 'Timer',
       icon: Icon(
-        Icons.timer,
-      ),
-      activeIcon: Icon(
         Icons.timer,
       ),
     ),

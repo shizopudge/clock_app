@@ -98,23 +98,29 @@ class _TimerViewState extends State<TimerView> {
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           vertical: 12, horizontal: 15),
-                      child: AppUtils.convertSecondsBeforeTimerAlarm(
-                        secondsBeforeTimerAlarm: timerState.duration,
-                        fontSize: 30,
-                        isPassed: false,
+                      child: SizedBox(
+                        height: 75,
+                        child: AppUtils.convertSecondsBeforeTimerAlarm(
+                          secondsBeforeTimerAlarm: timerState.duration,
+                          fontSize: 30,
+                          isPassed: false,
+                        ),
                       ),
                     )
                   else if (timerState.status == TimerStatus.paused)
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           vertical: 12, horizontal: 15),
-                      child: Text(
-                        'Paused',
-                        textAlign: TextAlign.center,
-                        style: AppFonts.labelStyle.copyWith(
-                          color: Pallete.actionColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 30,
+                      child: SizedBox(
+                        height: 75,
+                        child: Text(
+                          'Paused',
+                          textAlign: TextAlign.center,
+                          style: AppFonts.labelStyle.copyWith(
+                            color: Pallete.actionColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 30,
+                          ),
                         ),
                       ),
                     )
@@ -122,13 +128,16 @@ class _TimerViewState extends State<TimerView> {
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           vertical: 12, horizontal: 15),
-                      child: Text(
-                        'Timer completed',
-                        textAlign: TextAlign.center,
-                        style: AppFonts.labelStyle.copyWith(
-                          color: Pallete.actionColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 30,
+                      child: SizedBox(
+                        height: 75,
+                        child: Text(
+                          'Timer completed',
+                          textAlign: TextAlign.center,
+                          style: AppFonts.labelStyle.copyWith(
+                            color: Pallete.actionColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 30,
+                          ),
                         ),
                       ),
                     ),
@@ -164,7 +173,7 @@ class _TimerViewState extends State<TimerView> {
                   onTap: () => widget._timerController
                       .startTimer(context, totalSeconds, valueNotifier),
                   text: 'Start',
-                  padding: 32,
+                  padding: 20,
                 ),
               ),
             if (timerState.status == TimerStatus.paused)
@@ -177,7 +186,7 @@ class _TimerViewState extends State<TimerView> {
                       onTap: () => widget._timerController
                           .resumeTimer(context, valueNotifier),
                       text: 'Resume',
-                      padding: 32,
+                      padding: 20,
                     ),
                   ),
                   Padding(
@@ -190,7 +199,7 @@ class _TimerViewState extends State<TimerView> {
                       },
                       text: 'Cancel',
                       color: Colors.red,
-                      padding: 32,
+                      padding: 20,
                     ),
                   ),
                 ],
@@ -205,7 +214,7 @@ class _TimerViewState extends State<TimerView> {
                       onTap: () => widget._timerController
                           .pauseTimer(context, valueNotifier),
                       text: 'Pause',
-                      padding: 32,
+                      padding: 20,
                     ),
                   ),
                   Padding(
@@ -218,7 +227,7 @@ class _TimerViewState extends State<TimerView> {
                       },
                       text: 'Cancel',
                       color: Colors.red,
-                      padding: 32,
+                      padding: 20,
                     ),
                   ),
                 ],
@@ -232,7 +241,7 @@ class _TimerViewState extends State<TimerView> {
                         .stopAlarm(context, valueNotifier, _player);
                     widget._timerController.reset(context);
                   },
-                  padding: 32,
+                  padding: 20,
                   text: 'Stop',
                   color: Colors.red,
                 ),

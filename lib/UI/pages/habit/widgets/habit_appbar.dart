@@ -110,15 +110,9 @@ class HabitAppBar extends StatelessWidget {
                   : Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        AnimatedOpacity(
-                          duration: const Duration(
-                            milliseconds: 600,
-                          ),
-                          opacity: isCollapsed ? 1 : 0,
-                          child: Text(
-                            'Habits',
-                            style: AppFonts.titleStyle,
-                          ),
+                        Text(
+                          'Habits',
+                          style: AppFonts.titleStyle,
                         ),
                         Row(
                           children: [

@@ -20,6 +20,7 @@
             android:showOnLockScreen="true"
             android:showWhenLocked="true" 
             android:turnScreenOn="true"
+            android:keepScreenOn="true"
             android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"

@@ -243,7 +243,6 @@ class NotificationServices {
         await AlarmServices()
             .dismissPreAlarmNotification(preAlarmNotificationId);
         bool? result = await isLockScreen();
-        debugPrint('Is lock screen: $result');
         if (result != null) {
           if (result) {
             await AlarmServices().onAlarmFromLockScreen();
@@ -273,19 +272,6 @@ class NotificationServices {
   @pragma('vm:entry-point')
   static Future<void> onNotificationDisplayedMethod(
       ReceivedNotification action) async {
-    //? if (action.channelKey == 'alarm_notifications_channel') {
-    //   await DatabaseHelper.initDatabase();
-    //   final payload = action.payload ?? {};
-    //   final String alarmId = payload['alarmId'] ?? '';
-    //   final String preAlarmNotificationId =
-    //       payload['preAlarmNotificationId'] ?? '';
-    //   final bool isRepeatingAlarm =
-    //       AlarmsRepository().checkIsRepeatingAlarm(alarmId) ?? false;
-    //   if (!isRepeatingAlarm) {
-    //     await AlarmsRepository().disableAlarm(alarmId);
-    //   }
-    //   await AlarmServices().dismissPreAlarmNotification(preAlarmNotificationId);
-    // }
     debugPrint('NOTIFICATION DISPLAYED!');
   }
 
