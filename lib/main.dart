@@ -103,7 +103,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> initBackgroundServices() async {
     await BackgroundFetch.configure(
         BackgroundFetchConfig(
-          minimumFetchInterval: 15,
+          minimumFetchInterval: 1440,
           forceAlarmManager: true,
           startOnBoot: true,
           stopOnTerminate: false,
