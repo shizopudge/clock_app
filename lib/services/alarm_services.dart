@@ -270,7 +270,6 @@ class AlarmServices extends IAlarmServices {
         'preAlarmNotificationId': preAlarmNotificationId.toString(),
         'alarmId': alarm.id,
       },
-      fullScreenIntent: true,
       criticalAlert: true,
       showWhen: false,
       scheduled: true,

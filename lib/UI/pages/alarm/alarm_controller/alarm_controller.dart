@@ -72,7 +72,7 @@ class AlarmController extends IAlarmController {
 
   @override
   void onScroll(BuildContext context, ScrollController scrollController) {
-    if (scrollController.offset > 200) {
+    if (scrollController.offset > 55) {
       context.read<AlarmAppBarCubit>().collapse();
     } else {
       context.read<AlarmAppBarCubit>().expand();

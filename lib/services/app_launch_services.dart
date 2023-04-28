@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:keep_screen_on/keep_screen_on.dart';
-import 'package:wakelock/wakelock.dart';
 
 import '../core/utils.dart';
 
@@ -55,14 +53,6 @@ class AppLaunchServices {
             () => debugPrint(
                 'Habits scheduling on app start is success! ${DateTime.now()}'),
           );
-    }
-    final bool isKeepScreenOn = await KeepScreenOn.isOn ?? false;
-    if (!isKeepScreenOn) {
-      KeepScreenOn.turnOn();
-    }
-    final bool wakelockEnabled = await Wakelock.enabled;
-    if (!wakelockEnabled) {
-      Wakelock.enable();
     }
     FlutterNativeSplash.remove();
   }

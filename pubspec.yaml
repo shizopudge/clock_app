@@ -30,8 +30,6 @@ dependencies:
   app_launcher: ^1.0.0
   is_lock_screen: ^2.0.0
   slide_action: ^0.0.2
-  keep_screen_on: ^2.1.0
-  wakelock: ^0.4.0
 
 dev_dependencies:
   flutter_test:
