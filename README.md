@@ -1,16 +1,32 @@
-# alarm
+# Часы | Clock
 
-A new Flutter project.
+<p align="center"><img src="assets/logo.png" alt="Weather Forecast Logo" width="300" height="300"></p>
 
-## Getting Started
+### Функционал | Functionality
 
-This project is a starting point for a Flutter application.
+- Будильники (с выбором дней недели)
+- Напоминания (пользователь выбирает периодичность)
+- Таймер
 
-A few resources to get you started if this is your first Flutter project:
+#### Будильники и напоминания реализованы с помощью уведомлений, и с периодичностью в 1 день обновляются на 2 дня вперед при помощи пакета <a href="https://pub.dev/packages/background_fetch">background_fetch</a>, а также при запуске приложения и обновлении будильников и напоминаний.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Пакеты | Packages
+- flutter_bloc
+- google_fonts
+- intl
+- hive
+- hive_flutter
+- path_provider
+- uuid
+- flutter_timezone
+- rate_limiter
+- background_fetch
+- simple_circular_progress_bar
+- just_audio
+- flutter_native_splash
+- awesome_notifications
+- app_launcher
+- is_lock_screen
+- slide_action
+- hive_generator
+- build_runner
